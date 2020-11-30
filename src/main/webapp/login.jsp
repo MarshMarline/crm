@@ -6,19 +6,39 @@
 %>
 <html>
 <head>
-    <title>Title</title>
     <base href="<%=basePath%>"/>
+    <title>Title</title>
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
     <script>
+
+        $(function(){
+            $("#loginAct").val("");
+            $("#loginPwd").val("");
+            $("#loginAct").focus();
+            onkeydown = function (event) {
+                if(event.keyCode == 13){
+                    login();
+                }
+            }
+        })
+
         function login() {
+
+            var loginAct = $.trim($("#loginAct").val());
+            var loginPwd = $.trim($("#loginPwd").val());
+
+            if(loginAct == '' || loginPwd == ''){
+                $("#msg").text("用户名或密码不能为空！");
+                return;
+            }
             $.ajax({
                 type:'post',
-                url:'login.do',
+                url:'settings/user/login.do',
                 data:{
-                    "username":$(":text[name=username]").val(),
-                    "password":$(":password[name=password]").val()
+                    "loginAct":loginAct,
+                    "loginPwd":loginPwd
                 },
                 success:callback,
                 error:errorfun,
@@ -26,18 +46,26 @@
             });
         }
 
+        /*
+        * {
+        *   "success":flag,
+        *   "msg":"错误信息"
+        * }
+        * */
         function callback(res) {
-            if(res.loginAct != null){
-                alert("欢迎" + res.loginAct);
+            if(res.success == true){
+                /*jsp中不能直接定位到webinf下的文件，所以通过controller帮忙再次发起请求
+                * 我查了很久，但是没有查到更好的解决方法*/
+                window.location.href = "settings/user/uri.do?uri=index";
             }else{
-                alert($("#msg").text());
-                $("#msg").text("信息错误，登陆失败");
+                $("#msg").text(res.msg);
             }
         }
         
         function errorfun() {
-            $("#msg").text("信息错误，登陆失败");
+            $("#msg").text("error");
         }
+
     </script>
 </head>
 <body>
@@ -56,14 +84,14 @@
             <form action="login.do" class="form-horizontal" role="form" method="post">
                 <div class="form-group form-group-lg">
                     <div style="width: 350px;">
-                        <input class="form-control" type="text" name="username" placeholder="用户名">
+                        <input class="form-control" type="text" id="loginAct" placeholder="用户名">
                     </div>
                     <div style="width: 350px; position: relative;top: 20px;">
-                        <input class="form-control" type="password" name="password" placeholder="密码">
+                        <input class="form-control" type="password" id="loginPwd" placeholder="密码">
                     </div>
                     <div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 
-                        <span id="msg"></span>
+                        <span id="msg" style="color: #d9534f"></span>
 
                     </div>
                     <button type="button" class="btn btn-primary btn-lg btn-block"  onclick="login()" style="width: 350px; position: relative;top: 45px;">登录</button>

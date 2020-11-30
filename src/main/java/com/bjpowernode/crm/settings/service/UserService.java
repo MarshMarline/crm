@@ -1,9 +1,8 @@
 package com.bjpowernode.crm.settings.service;
 
+import com.bjpowernode.crm.exception.LoginException;
 import com.bjpowernode.crm.settings.domain.User;
 
-import javax.servlet.http.HttpServletRequest;
-
 public interface UserService {
-    User login(HttpServletRequest request, String username, String password);
+    User login(String loginAct, String loginPwd,String ip) throws LoginException;
 }

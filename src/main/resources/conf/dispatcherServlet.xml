@@ -12,11 +12,30 @@
     -->
     <context:component-scan base-package="com.bjpowernode.crm.settings.web.controller"/>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="prefix" value="/WEB-INF/jsp/workbench/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="viewMappings" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" >
+        <property name="defaultHandler">
+        <bean name="index" class="org.springframework.web.servlet.mvc.UrlFilenameViewController" />
+        </property>
+    </bean>
+
     <mvc:resources mapping="/static/**" location="/static/"/>
+    <mvc:resources mapping="/image/**" location="/image/"/>
+    <mvc:resources mapping="/jquery/**" location="/jquery/"/>
+    <mvc:resources mapping="/settings/**" location="/settings/"/>
 
     <mvc:annotation-driven/>
+
+    <mvc:interceptors>
+        <!--声明第一个拦截器-->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <!--声明拦截器对象-->
+            <bean class="com.bjpowernode.crm.handler.PermissionInterceptor" />
+        </mvc:interceptor>
+    </mvc:interceptors>
+
 </beans>
