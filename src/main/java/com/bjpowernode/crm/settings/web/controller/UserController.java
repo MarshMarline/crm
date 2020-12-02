@@ -4,8 +4,6 @@ import com.bjpowernode.crm.exception.LoginException;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
 import com.bjpowernode.crm.utils.MD5Util;
-import com.bjpowernode.crm.utils.PrintJson;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,21 +23,25 @@ public class UserController {
     UserService userService;
 
     @RequestMapping("/login.do")
-    //@ResponseBody
-    public void login(HttpServletRequest request, HttpServletResponse response, String loginAct, String loginPwd){
-            String ip = request.getRemoteAddr();
-            loginPwd = MD5Util.getMD5(loginPwd);
+    @ResponseBody
+    public Object login(HttpServletRequest request, HttpServletResponse response, String loginAct, String loginPwd){
+        Map<String,Object> map = new HashMap<>();
+        //获取浏览器的ip地址
+        String ip = request.getRemoteAddr();
+        //将密码转化为MD5的密文形式
+        loginPwd = MD5Util.getMD5(loginPwd);
 
         try {
-            //将密码转化为MD5的密文形式
-            //获取浏览器的ip地址
             User user = userService.login(loginAct, loginPwd, ip);
             request.getSession().setAttribute("user",user);
             /*
               程序执行到此处说明没有抛异常，表示登录成功
             * {"success":true}
+            * 老师这里使用了自己写的json工具类，但是我们已经在使用springmvc框架了
+            * 框架可以在返回的时候自动把对象转换成json传送回去，
+            * 所以我在这里就不调用老师的工具类了
             * */
-            PrintJson.printJsonFlag(response,true);
+            map.put("success",true);
         } catch (LoginException e) {
             e.printStackTrace();
 
@@ -47,11 +49,12 @@ public class UserController {
             * 执行到catch表示登陆失败
             *   {"success":true,"msg":?}
             * */
-            Map<String,Object> map = new HashMap<>();
             map.put("success",false);
             map.put("msg",e.getMessage());
-            PrintJson.printJsonObj(response,map);
         }
+
+        return map;
+
     }
 
     @RequestMapping("/uri.do")
