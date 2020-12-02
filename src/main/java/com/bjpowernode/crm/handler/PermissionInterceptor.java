@@ -10,7 +10,7 @@ public class PermissionInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if(request.getRequestURI().contains("login")) return true;
         if(request.getSession().getAttribute("user") != null) return true;
-        request.getRequestDispatcher(request.getContextPath() + "/login.jsp").forward(request,response);
+        response.sendRedirect(request.getContextPath()+"/login.jsp");
         return false;
     }
 }
