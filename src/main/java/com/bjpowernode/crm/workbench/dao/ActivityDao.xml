@@ -9,4 +9,47 @@
         insert into tbl_activity(id,owner,name,startDate,endDate,cost,description,createTime,createBy,editTime,editBy) values(#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy},#{editTime},#{editBy})
     </insert>
 
+    <!--
+    	<select id="queryQuestionDynamic" parameterType="Map" resultType="Question">
+		select * from question
+		<where>
+			<if test="questionId !=null and questionId != ''">
+			and questionId like'%' #{questionId} '%'
+			</if>
+			<if test="title !=null and title != ''">
+			and title like'%' #{title} '%'
+			</if>
+			<if test="answer !=null and answer != ''">
+			and answer=#{answer}
+			</if>
+		</where>
+	</select>
+    -->
+
+    <select id="getPageList" resultType="Activity">
+        select a.id, a.name, u.name as owner, a.startDate, a.endDate
+        from tbl_activity a
+        join tbl_user u
+        on
+          a.owner = u.id
+        <where>
+            <if test="name != null and name != ''">
+                a.name like '%' #{name} '%'
+            </if>
+            <if test="owner != null and owner != ''">
+                and u.name like '%' #{owner} '%'
+            </if>
+            <if test="startDate != null and startDate != ''">
+                and startDate &gt; #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                and endDate &lt; #{endDate}
+            </if>
+        </where>
+        order by a.createTime desc
+        limit #{skipPage},#{pageSize}
+    </select>
+
+
+
 </mapper>

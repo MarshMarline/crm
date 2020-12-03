@@ -24,7 +24,7 @@
 
         $(function () {
 
-            pageList(0,2);
+            pageList(1,5);
 
             /*
                 操作模态窗口的方式：
@@ -101,7 +101,7 @@
 								dom对象转换为jquery对象：
 									$(dom)
 						    */
-                            $("#addActivity")[0].reset();
+                            //$("#addActivity")[0].reset();
                         }else{
                             alert("保存失败");
                         }
@@ -116,29 +116,29 @@
 
         });
 
-        function pageList(pageSize,pageNum){
+        function pageList(pageNo,pageSize){
             $.ajax({
                 type:'get',
                 url:"workbench/activity/pageList.do",
                 data:{
                     "pageSize":pageSize,
-                    "pageNum":pageNum,
+                    "pageNo":pageNo,
                     "name":$.trim($("#search-name").val()),
                     "owner":$.trim($("#search-owner").val()),
-                    "startTime":$.trim($("#search-startTime").val()),
-                    "endTime":$.trim($("#search-endTime").val()),
+                    "startDate":$.trim($("#search-startDate").val()),
+                    "endDate":$.trim($("#search-endDate").val())
                 },
 
                 success:function(res){
                     var html = "";
                     $.each(res.dataList, function (i,act) {
                         html += '<tr class="active">';
-                        html += '<td><input type="checkbox" value="${act.id}"/></td>';
+                        html += '<td><input type="checkbox" value='+act.id+'/></td>';
                         html += '<td><a style="text-decoration: none; cursor: pointer;"';
-                        html += '<td><a onclick="window.location.href=\'uri.do?uri=activity/detail?id=${act.id}\';">发传单</a></td>';
-                        html += '<td>${act.owner}</td>';
-                        html += '<td>${act.startDate}</td>';
-                        html += '<td>${act.endDate}</td>';
+                        html += '<td><a onclick="window.location.href=\'uri.do?uri=activity/detail?id='+act.id+'\';">'+act.name+'</a></td>';
+                        html += '<td>'+act.owner+'</td>';
+                        html += '<td>'+act.startDate+'</td>';
+                        html += '<td>'+act.endDate+'</td>';
                         html += '</tr>';
                         $("#activityList").html(html);
                     });
@@ -324,13 +324,13 @@
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">开始日期</div>
-                        <input class="form-control" type="text" id="search-startTime"/>
+                        <input class="form-control" type="text" id="search-startDate"/>
                     </div>
                 </div>
                 <div class="form-group">
                     <div class="input-group">
                         <div class="input-group-addon">结束日期</div>
-                        <input class="form-control" type="text" id="search-endTime">
+                        <input class="form-control" type="text" id="search-endDate">
                     </div>
                 </div>
 

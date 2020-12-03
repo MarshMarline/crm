@@ -1,9 +1,14 @@
 package com.bjpowernode.crm.workbench.dao;
 
+import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.domain.Activity;
+
+import java.util.HashMap;
+import java.util.List;
 
 public interface ActivityDao {
 
     int saveActivity(Activity activity);
 
+    List<Activity> getPageList(HashMap<String, Object> map);
 }
