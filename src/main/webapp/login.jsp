@@ -4,18 +4,26 @@
             request.getServerName() + ":" + request.getServerPort() +
             request.getContextPath() + "/";
 %>
+<!DOCTYPE html>
 <html>
 <head>
     <base href="<%=basePath%>"/>
-    <title>Title</title>
     <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
     <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
     <script>
 
         $(function(){
+
+            //页面加载完毕后如果当前不是顶层窗口，把当前窗口变为顶层窗口
+            if(window.top!=window){
+                window.top.location = window.location;
+            }
+
+            //页面加载完毕后清空输入框内容
             $("#loginAct").val("");
             $("#loginPwd").val("");
+            //页面加载完毕后，让用户的文本框自动获得焦点
             $("#loginAct").focus();
             onkeydown = function (event) {
                 if(event.keyCode == 13){
@@ -56,7 +64,7 @@
             if(res.success == true){
                 /*jsp中不能直接定位到webinf下的文件，所以通过controller帮忙再次发起请求
                 * 我查了很久，但是没有查到更好的解决方法*/
-                window.location.href = "settings/user/uri.do?uri=index";
+                window.location.href = "uri.do?uri=index";
             }else{
                 $("#msg").text(res.msg);
             }

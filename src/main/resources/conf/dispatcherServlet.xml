@@ -10,7 +10,7 @@
         注册什么什么的驱动
         注册视图解析器
     -->
-    <context:component-scan base-package="com.bjpowernode.crm.settings.web.controller"/>
+    <context:component-scan base-package="com.bjpowernode.crm.*.web.controller"/>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/workbench/"/>
         <property name="suffix" value=".jsp"/>

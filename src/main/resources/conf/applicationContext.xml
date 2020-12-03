@@ -51,7 +51,7 @@
             一次getMapper()方法，得到每个接口的dao对象。
             创建好的dao对象放入到spring的容器中的。 dao对象的默认名称是 接口名首字母小写
         -->
-        <property name="basePackage" value="com.bjpowernode.crm.settings.dao"/>
+        <property name="basePackage" value="com.bjpowernode.crm.settings.dao, com.bjpowernode.crm.workbench.dao"/>
     </bean>
 
     <!--声明service-->
@@ -62,6 +62,7 @@
 
     <!--声明service的注解@Service所在的包名位置-->
     <context:component-scan base-package="com.bjpowernode.crm.settings.service.impl" />
+    <context:component-scan base-package="com.bjpowernode.crm.workbench.service.impl" />
 
     <!--声明式事务处理：和源代码完全分离的-->
     <!--1.声明事务管理器对象-->

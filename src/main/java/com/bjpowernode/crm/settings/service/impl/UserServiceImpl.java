@@ -8,6 +8,7 @@ import com.bjpowernode.crm.utils.DateTimeUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @Service
@@ -40,5 +41,11 @@ public class UserServiceImpl implements UserService {
 
         //程序执行到这里表明以上验证全部通过未抛出异常
         return user;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        List<User> users = userDao.getUsers();
+        return users;
     }
 }
