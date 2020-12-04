@@ -13,4 +13,12 @@ public interface ActivityDao {
     List<Activity> getPageList(HashMap<String, Object> map);
 
     int getTotal(HashMap<String,Object> map);
+
+    int delete(String[] id);
+
+    int deleteRemark(String[] id);
+
+    Activity getActivityById(String id);
+
+    int updateActivity(HashMap<String, Object> map);
 }

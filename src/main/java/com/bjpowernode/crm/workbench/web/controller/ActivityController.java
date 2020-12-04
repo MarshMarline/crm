@@ -8,6 +8,7 @@ import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -60,5 +61,43 @@ public class ActivityController {
         map.put("pageSize", pageSize);
         PaginationVO<Activity> vo = activityService.getPageList(map);
         return vo;
+    }
+
+    @RequestMapping("/delete.do")
+    @ResponseBody
+    Map<String,Object> delete(String ids){
+        Map<String, Object> map = new HashMap<>();
+        String[] id = ids.split(",");
+        int count = activityService.delete(id);
+        if(count > 0){
+            map.put("flag",true);
+            map.put("count",count);
+        }else{
+            map.put("flag",false);
+        }
+        return map;
+    }
+
+    @RequestMapping("/openUpdate.do")
+    @ResponseBody
+    Map<String,Object> openUpdate(String id){
+        Map<String, Object> map = new HashMap<>();
+        List<User> users = userService.getUsers();
+        Activity activity = activityService.getActivityById(id);
+        map.put("activity",activity);
+        map.put("users",users);
+        return map;
+    }
+
+    @RequestMapping("/updateActivity.do")
+    @ResponseBody
+    Map<String,Object> updateActivity(@RequestParam HashMap<String,Object> map){
+        Map<String, Object> resmap = new HashMap<>();
+        if(1==activityService.updateActivity(map)){
+            resmap.put("flag",true);
+        }else{
+            resmap.put("flag",true);
+        }
+        return resmap;
     }
 }

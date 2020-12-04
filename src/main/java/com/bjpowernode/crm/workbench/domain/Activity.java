@@ -123,7 +123,7 @@ public class Activity {
 
     @Override
     public String toString() {
-        return "ActivityRemark{" +
+        return "Activity{" +
                 "id='" + id + '\'' +
                 ", owner='" + owner + '\'' +
                 ", name='" + name + '\'' +

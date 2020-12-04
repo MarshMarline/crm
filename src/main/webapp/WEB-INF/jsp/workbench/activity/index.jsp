@@ -34,16 +34,7 @@
                 需要操作的模态窗口的jquery对象，调用modal方法，为该方法传递参数 show:打开模态窗口   hide：关闭模态窗口
             */
 
-            $("#getListbtn").click(function (){
-                //点击查询按钮的时候，我们应该将搜索框中的信息保存起来,保存到隐藏域中
-                $("#hidden-name").val($.trim($("#search-name").val()));
-                $("#hidden-owner").val($.trim($("#search-owner").val()));
-                $("#hidden-startDate").val($.trim($("#search-startDate").val()));
-                $("#hidden-endDate").val($.trim($("#search-endDate").val()));
-                pageList(1,5);
-            });
-
-            $("#addbtn").click(function () {
+            $("#updatebtn").click(function () {
 
                 $(".time").datetimepicker({
                     minView: "month",
@@ -53,6 +44,67 @@
                     todayBtn: true,
                     pickerPosition: "bottom-left"
                 });
+
+                $.ajax({
+                    type:'post',
+                    url:"workbench/activity/openUpdate.do",
+                    data:{
+                        "id":$("input[name=xz]:checked").val()
+                    },
+                    success:function (res) {
+                        $("#edit-marketActivityOwner").empty();
+                        $.each(res.users, function (i, n){
+                            $("#edit-marketActivityOwner").append($("<option value="+n.id+"></option>").append(n.name));
+                        });
+                        $("#edit-marketActivityOwner").val(res.activity.owner);
+                        $("#edit-marketActivityName").val(res.activity.name);
+                        $("#edit-startTime").val(res.activity.startDate);
+                        $("#edit-endTime").val(res.activity.endDate);
+                        $("#edit-cost").val(res.activity.cost);
+                        $("#edit-describe").val(res.activity.description);
+
+                    },
+                    error:errorfun()
+                });
+            });
+
+            $("#getListbtn").click(function (){
+                //点击查询按钮的时候，我们应该将搜索框中的信息保存起来,保存到隐藏域中
+                $("#hidden-name").val($.trim($("#search-name").val()));
+                $("#hidden-owner").val($.trim($("#search-owner").val()));
+                $("#hidden-startDate").val($.trim($("#search-startDate").val()));
+                $("#hidden-endDate").val($.trim($("#search-endDate").val()));
+                pageList(1,5);
+            });
+
+            $("#deletebtn").click(
+                function () {
+                    var ok = window.confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
+                    if(!ok){return;};
+                    var ids = $("input[name=xz]:checked:eq(0)").val();
+                    for(var i = 1; i < $("input[name=xz]:checked").length; i ++){
+                        ids += ","+$("input[name=xz]:checked:eq("+i+")").val();
+                    }
+                    $.ajax({
+                        type:'get',
+                        url:"workbench/activity/delete.do",
+                        data:{"ids":ids},
+                        success:function (res) {
+                            if(res.flag){
+                                alert("成功删除" + res.count + "条记录！");
+                                pageList(1,5);
+                            }else{
+                                alert("删除失败");
+                            }
+                        },
+                        error:function () {
+                            alert("删除失败！")
+                        }
+                    });
+                }
+            );
+
+            $("#addbtn").click(function () {
 
                 $("#createActivityModal").modal("show");
                 $.ajax({
@@ -73,6 +125,51 @@
                     error:errorfun
                 });
 
+            });
+
+            $("#editbtn").click(function () {
+                $.ajax({
+                    type:'post',
+                    url:"workbench/activity/updateActivity.do",
+                    data:{
+                        id:$("input:checkbox[name=xz]").val(),
+                        owner:$.trim($("#edit-marketActivityOwner").val()),
+                        name:$.trim($("#edit-marketActivityName").val()),
+                        startDate:$.trim($("#edit-startTime").val()),
+                        endDate:$.trim($("#edit-endTime").val()),
+                        cost:$.trim($("#edit-cost").val()),
+                        description:$.trim($("#edit-describe").val()),
+                        editBy:"${user.name}"
+                    },
+                    success:function(res){
+                        if(res.flag){
+                            alert("保存成功！");
+                            /*
+							注意：
+								我们拿到了form表单的jquery对象
+								对于表单的jquery对象，提供了submit()方法让我们提交表单
+								但是表单的jquery对象，没有为我们提供reset()方法让我们重置表单（坑：idea为我们提示了有reset()方法）
+
+								虽然jquery对象没有为我们提供reset方法，但是原生js为我们提供了reset方法
+								所以我们要将jquery对象转换为原生dom对象
+
+								jquery对象转换为dom对象：
+									jquery对象[下标]
+
+								dom对象转换为jquery对象：
+									$(dom)
+						    */
+                            //$("#addActivity")[0].reset();
+                            pageList(1,5);
+                        }else{
+                            alert("保存失败");
+                        }
+                    },
+
+                    error:function () {
+                        alert("error");
+                    }
+                })
             });
 
             $("#save").click(function(){
@@ -114,6 +211,7 @@
 									$(dom)
 						    */
                             //$("#addActivity")[0].reset();
+                            pageList(1,5);
                         }else{
                             alert("保存失败");
                         }
@@ -127,7 +225,8 @@
 
             //为全选框绑定全选事件
             $("#qx").change(function () {
-                $(":checkbox[name=xz]").prop("checked",$("#qx").prop("checked"))
+                $(":checkbox[name=xz]").prop("checked",$("#qx").prop("checked"));
+                $("#deletebtn").prop("disabled",!($(":checkbox[name=xz]:checked").length!=0));
             })
 
 
@@ -142,7 +241,9 @@
             */
 
             $("#activityList").on("change",$(":checkbox[name=xz]"),function () {
-                $("#qx").prop("checked",$(":checkbox[name=xz]").length == $(":checkbox[name=xz]:checked").length)
+                $("#qx").prop("checked",$(":checkbox[name=xz]").length == $(":checkbox[name=xz]:checked").length);
+                $("#deletebtn").prop("disabled",!($(":checkbox[name=xz]:checked").length!=0));
+                $("#updatebtn").prop("disabled",!($(":checkbox[name=xz]:checked").length==1));
             });
 
 
@@ -174,7 +275,7 @@
                     var html = "";
                     $.each(res.dataList, function (i,act) {
                         html += '<tr class="active">';
-                        html += '<td><input type="checkbox" name="xz" value='+act.id+'/></td>';
+                        html += '<td><input type="checkbox" name="xz" value='+act.id+' /></td>';
                         html += '<td><a style="text-decoration: none; cursor: pointer;"';
                         html += '<td><a onclick="window.location.href=\'uri.do?uri=activity/detail?id='+act.id+'\';">'+act.name+'</a></td>';
                         html += '<td>'+act.owner+'</td>';
@@ -326,14 +427,15 @@
                         </div>
                     </div>
 
+
                     <div class="form-group">
                         <label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="edit-startTime" value="2020-10-10">
+                            <input type="text" class="form-control time" id="edit-startTime" readonly/>
                         </div>
                         <label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
                         <div class="col-sm-10" style="width: 300px;">
-                            <input type="text" class="form-control" id="edit-endTime" value="2020-10-20">
+                            <input type="text" class="form-control time" id="edit-endTime" readonly/>
                         </div>
                     </div>
 
@@ -356,7 +458,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">更新</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="editbtn">更新</button>
             </div>
         </div>
     </div>
@@ -431,10 +533,10 @@
                 <button type="button" class="btn btn-primary" id="addbtn">
                     <span class="glyphicon glyphicon-plus"></span> 创建
                 </button>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal"><span
-                        class="glyphicon glyphicon-pencil"></span> 修改
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal" id="updatebtn" disabled>
+                    <span class="glyphicon glyphicon-pencil"></span> 修改
                 </button>
-                <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+                <button type="button" class="btn btn-danger" id="deletebtn" disabled="true"><span class="glyphicon glyphicon-minus"></span> 删除</button>
             </div>
 
         </div>

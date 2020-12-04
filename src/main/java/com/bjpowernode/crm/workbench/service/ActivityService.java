@@ -11,4 +11,10 @@ public interface ActivityService {
     int saveActivity(Activity activity);
 
     PaginationVO<Activity> getPageList(HashMap<String, Object> map);
+
+    int delete(String[] id);
+
+    Activity getActivityById(String id);
+
+    int updateActivity(HashMap<String, Object> map);
 }
