@@ -11,4 +11,6 @@ public interface ActivityDao {
     int saveActivity(Activity activity);
 
     List<Activity> getPageList(HashMap<String, Object> map);
+
+    int getTotal(HashMap<String,Object> map);
 }

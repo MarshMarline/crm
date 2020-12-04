@@ -28,7 +28,8 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public PaginationVO<Activity> getPageList(HashMap<String, Object> map) {
         List<Activity> activities = activityDao.getPageList(map);
-        PaginationVO<Activity> vo = new PaginationVO<>(activities.size(),activities);
+        int total = activityDao.getTotal(map);
+        PaginationVO<Activity> vo = new PaginationVO<>(total,activities);
         return vo;
     }
 }
