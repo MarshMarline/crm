@@ -3,6 +3,7 @@ package com.bjpowernode.crm.workbench.service.impl;
 import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.settings.dao.UserDao;
 import com.bjpowernode.crm.utils.DateTimeUtil;
+import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.dao.ActivityDao;
 import com.bjpowernode.crm.workbench.dao.ActivityRemarkDao;
@@ -35,7 +36,7 @@ public class ActivityServiceImpl implements ActivityService {
     public PaginationVO<Activity> getPageList(HashMap<String, Object> map) {
         List<Activity> activities = activityDao.getPageList(map);
         int total = activityDao.getTotal(map);
-        PaginationVO<Activity> vo = new PaginationVO<>(total,activities);
+        PaginationVO<Activity> vo = new PaginationVO<>(total, activities);
         return vo;
     }
 
@@ -44,7 +45,7 @@ public class ActivityServiceImpl implements ActivityService {
         int count = activityRemarkDao.getNums(id);
         if (count == activityRemarkDao.deleteRemark(id) && activityDao.delete(id) == id.length) {
             return id.length;
-        }else{
+        } else {
             throw new DeleteException("删除失败！");
         }
     }
@@ -63,6 +64,35 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public List<ActivityRemark> getRemarks(String id) {
         return activityRemarkDao.getRemarks(id);
+    }
+
+    @Override
+    public int deleteRemarkById(String id) {
+        return activityRemarkDao.deleteRemarkById(id);
+    }
+
+    @Override
+    public boolean addRemark(ActivityRemark activityRemark) {
+        boolean flag = false;
+        activityRemark.setId(UUIDUtil.getUUID());
+        activityRemark.setCreateTime(DateTimeUtil.getSysTime());
+        activityRemark.setEditFlag("0");
+        if(activityRemarkDao.addRemark(activityRemark) == 1){
+            flag = true;
+        }
+        return flag;
+    }
+
+    @Override
+    public boolean updateRemark(ActivityRemark activityRemark) {
+        Boolean flag = false;
+        activityRemark.setEditFlag("1");
+        activityRemark.setEditTime(DateTimeUtil.getSysTime());
+        System.out.println(activityRemark);
+        if(activityRemarkDao.updateRemark(activityRemark)==1){
+            flag = true;
+        }
+        return flag;
     }
 
 }

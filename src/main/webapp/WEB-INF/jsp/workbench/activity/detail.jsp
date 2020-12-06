@@ -48,6 +48,8 @@ request.getContextPath() + "/";
 			pickerPosition: "bottom-left"
 		});
 
+
+
 		$.ajax({
 			type:'get',
 			url:"workbench/activity/getUsers.do",
@@ -56,19 +58,115 @@ request.getContextPath() + "/";
 				$.each(res, function (i, n){
 					$("#edit-marketActivityOwner").append($("<option value="+n.id+"></option>").append(n.name));
 				});
-				//通过userid比对出owner，自动选中所有者
+				//通过userid比对出owner，在模态窗口中自动选中所有者
 				$("#edit-marketActivityOwner").val("${activity.owner}");
 				//从模态窗口中用户下拉表中被选中的id得到所有者的名字展示在页面
 				$("#show-name").text($("option[value='${activity.owner}']").text());
 			},
 		});
-		
-		$("#cancelBtn").click(function(){
+
+        showRemarks();
+
+        //当备注文本框为空的时候设置保存和修改按钮不可用
+        $("#remark").mouseout(function () {
+            if($("#remark").val() != null && $.trim($("#remark").val()) != ""){
+                $("#saveRemarkbtn").prop("disabled",false);
+            }else{
+                $("#saveRemarkbtn").prop("disabled",true);
+            }
+        });
+
+		$("#noteContent").mouseout(function () {
+			if($.trim($("#noteContent").val()) == "" || $("#noteContent").val() == null){
+				$("#updateRemarkBtn").prop("disabled",true);
+			}else{
+				$("#updateRemarkBtn").prop("disabled",false);
+			}
+		});
+
+		//设置备注回车提交和更新(反正也不能换行)
+		$("#remark").focus(function () {
+			onkeydown = function (event) {
+				if (event.keyCode == 13 && $("#remark").val() != null && $.trim($("#remark").val()) != ""){
+					$("#saveRemarkbtn").click();
+				}
+			};
+		});
+
+		$("#noteContent").focus(function () {
+			onkeydown = function (event) {
+				if (event.keyCode == 13 && $("#noteContent").val() != null && $.trim($("#noteContent").val()) != ""){
+					$("#updateRemarkBtn").click();
+				}
+			};
+		});
+
+        $("#saveRemarkbtn").click(function () {
+        	if($.trim($("#remark").val()).length > 80){
+        		alert("字数长度超过限制！(80字内)");
+        		return;
+			}
+            $.ajax({
+                type:'post',
+                url:"workbench/activity/addRemark.do",
+                data:{
+                    "noteContent":$.trim($("#remark").val()),
+                    "createBy":"${user.name}",
+                    "activityId":"${activity.id}"
+                },
+                success:function (res) {
+					if(res.flag){
+						showRemarks();
+						$("#cancelBtn").click();
+					}else{
+						alert("添加备注失败！");
+					}
+                },
+                error:errorfun
+            });
+        });
+
+        $("#updateRemarkBtn").click(function () {
+			if($.trim($("#remark").val()).length > 80){
+				alert("字数长度超过限制！(80字内)");
+				return;
+			}
+			$.ajax({
+				type:'post',
+				url:"workbench/activity/updateRemark.do",
+				data:{
+					"id":$("#remarkId").val(),
+					"noteContent":$.trim($("#noteContent").val()),
+					"editBy":"${user.name}"
+				},
+				success:function (res) {
+					if(res.flag){
+						$("#edit-close").click();
+						showRemarks();
+
+					}else{
+						alert("修改失败！");
+					}
+				},
+				error:errorfun
+			});
+		});
+
+        $("#remarkBody").on("mouseover",".remarkDiv",function(){
+            $(this).children("div").children("div").show();
+        })
+        $("#remarkBody").on("mouseout",".remarkDiv",function(){
+            $(this).children("div").children("div").hide();
+        })
+
+
+        $("#cancelBtn").click(function(){
 			//显示
 			$("#cancelAndSaveBtn").hide();
 			//设置remarkDiv的高度为130px
 			$("#remarkDiv").css("height","90px");
 			cancelAndSaveBtnDefault = true;
+			$("#remark").val("");
 		});
 		
 		$(".remarkDiv").mouseover(function(){
@@ -87,7 +185,70 @@ request.getContextPath() + "/";
 			$(this).children("span").css("color","#E6E6E6");
 		});
 	});
-	
+
+	function showRemarks() {
+        $.ajax({
+            type:'get',
+            url:"workbench/activity/getRemarks.do",
+            data:{id:"${activity.id}"},
+            dataType:'json',
+            success:function (remarks) {
+                var html="";
+                $("#show-remarks").empty();
+                $.each(remarks,function (i,re) {
+                    /*
+                        javascript:void(0);
+                            将超链接禁用，只能以触发事件的形式来操作
+                     */
+                    html += '<div class="remarkDiv" style="height: 60px;" id="'+re.id+'">';
+                    html += '<img title="'+re.createBy+'" src="image/user-thumbnail.png" style="width: 30px; height:30px;">';
+                    html += '<div style="position: relative; top: -40px; left: 40px;" >';
+                    html += '<h5 name="'+re.id+'">'+re.noteContent+'</h5>';
+                    html += '<font color="gray">市场活动</font> <font color="gray">-</font> <b>"${activity.name}"</b> <small style="color: gray;"> '+ (re.editFlag == 0 ? re.createTime+' 由'+re.createBy : re.editTime+' 由'+re.editBy) +'</small>';
+                    html += '<div style="position: relative; left: 500px; top: -30px; height: 30px; width: 100px; display: none;">';
+                    html += '<a class="myHref" href="javascript:void(0);" onclick="editRemark(\''+re.id+'\')"><span class="glyphicon glyphicon-edit" style="font-size: 20px; color:  #FFB6C1;/*粉色*/"></span></a>';
+                    html += '&nbsp;&nbsp;&nbsp;&nbsp;';
+                    html += '<a class="myHref" href="javascript:void(0);" onclick="deleteRemark(\''+re.id+'\')"><span class="glyphicon glyphicon-remove" style="font-size: 20px; color: #FFB6C1;"></span></a>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                $("#show-remarks").html(html);
+            },
+            error:errorfun
+        });
+    }
+
+    function deleteRemark(id) {
+		if(!confirm("确认删除备注：“"+ $("h5[name="+id+"]").text() +"”吗？")){
+			return;
+		}
+        $.ajax({
+            type:'get',
+            url:"workbench/activity/deleteRemarkById.do",
+            data:{"id":id},
+            success:function (res) {
+                if(res.flag){
+                    //showRemarks();
+                    $("#"+id).remove();
+                }else{
+                    alert("删除失败！");
+                }
+            },
+            error:errorfun
+        })
+    }
+
+    function editRemark(id) {
+		$("#editRemarkModal").modal("show");
+		$("#noteContent").val($("h5[name="+id+"]").text());
+		$("#remarkId").val(id);
+	}
+
+    function errorfun(){
+        alert("error");
+    }
+
 </script>
 
 </head>
@@ -116,7 +277,7 @@ request.getContextPath() + "/";
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="edit-close">关闭</button>
                     <button type="button" class="btn btn-primary" id="updateRemarkBtn">更新</button>
                 </div>
             </div>
@@ -210,6 +371,7 @@ request.getContextPath() + "/";
 			<div style="width: 300px; color: gray;">所有者</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b id="show-name">${activity.owner}</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">名称</div>
+            <input type="hidden" id="activityId" value="${activity.id}">
 			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${activity.name}</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
@@ -250,13 +412,13 @@ request.getContextPath() + "/";
 	</div>
 	
 	<!-- 备注 -->
-	<div style="position: relative; top: 30px; left: 40px;">
+	<div style="position: relative; top: 30px; left: 40px;" id="remarkBody">
 		<div class="page-header">
 			<h4>备注</h4>
 		</div>
 		
 		<!-- 备注1 -->
-
+<div id="show-remarks">
 		<div class="remarkDiv" style="height: 60px;">
 			<img title="zhangsan" src="image/user-thumbnail.png" style="width: 30px; height:30px;">
 			<div style="position: relative; top: -40px; left: 40px;" >
@@ -283,13 +445,15 @@ request.getContextPath() + "/";
 				</div>
 			</div>
 		</div>
+
+</div>
 		
 		<div id="remarkDiv" style="background-color: #E6E6E6; width: 870px; height: 90px;">
 			<form role="form" style="position: relative;top: 10px; left: 10px;">
 				<textarea id="remark" class="form-control" style="width: 850px; resize : none;" rows="2"  placeholder="添加备注..."></textarea>
 				<p id="cancelAndSaveBtn" style="position: relative;left: 737px; top: 10px; display: none;">
 					<button id="cancelBtn" type="button" class="btn btn-default">取消</button>
-					<button type="button" class="btn btn-primary">保存</button>
+					<button type="button" class="btn btn-primary" id="saveRemarkbtn" disabled>保存</button>
 				</p>
 			</form>
 		</div>

@@ -11,4 +11,10 @@ public interface ActivityRemarkDao {
     int deleteRemark(String[] id);
 
     int getNums(String[] id);
+
+    int deleteRemarkById(String id);
+
+    int addRemark(ActivityRemark activityRemark);
+
+    int updateRemark(ActivityRemark activityRemark);
 }

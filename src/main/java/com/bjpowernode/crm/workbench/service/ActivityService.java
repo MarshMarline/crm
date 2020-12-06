@@ -21,4 +21,10 @@ public interface ActivityService {
     int updateActivity(HashMap<String, Object> map);
 
     List<ActivityRemark> getRemarks(String id);
+
+    int deleteRemarkById(String id);
+
+    boolean addRemark(ActivityRemark activityRemark);
+
+    boolean updateRemark(ActivityRemark activityRemark);
 }

@@ -109,10 +109,51 @@ public class ActivityController {
     ModelAndView detail(String id){
         ModelAndView mv = new ModelAndView();
         Activity activity = activityService.getActivityById(id);
-        List<ActivityRemark> remarks = activityService.getRemarks(id);
         mv.addObject("activity",activity);
-        mv.addObject("remarks",remarks);
         mv.setViewName("activity/detail");
         return mv;
+    }
+
+    @RequestMapping("/getRemarks.do")
+    @ResponseBody
+    List<ActivityRemark> getRemarks(String id){
+        List<ActivityRemark> remarks = activityService.getRemarks(id);
+        return remarks;
+    }
+
+    @RequestMapping("/deleteRemarkById")
+    @ResponseBody
+    Map<String,Object> deleteRemarkById(String id){
+        Map<String, Object> resmap = new HashMap<>();
+        if(activityService.deleteRemarkById(id)==1) {
+            resmap.put("flag", true);
+        }else{
+            resmap.put("flag", false);
+        }
+        return resmap;
+    }
+
+    @RequestMapping("/addRemark.do")
+    @ResponseBody
+    Map<String,Object> addRemark(ActivityRemark activityRemark){
+        Map<String, Object> resmap = new HashMap<>();
+        if(activityService.addRemark(activityRemark)){
+            resmap.put("flag",true);
+        }else{
+            resmap.put("flag",false);
+        }
+        return resmap;
+    }
+
+    @RequestMapping("/updateRemark.do")
+    @ResponseBody
+    Map<String,Object> updateRemark(ActivityRemark activityRemark){
+        Map<String, Object> resmap = new HashMap<>();
+        if(activityService.updateRemark(activityRemark)){
+            resmap.put("flag",true);
+        }else{
+            resmap.put("flag",false);
+        }
+        return resmap;
     }
 }
