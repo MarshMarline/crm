@@ -1,23 +1,24 @@
 package com.bjpowernode.crm.workbench.web.controller;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
 import com.bjpowernode.crm.utils.DateTimeUtil;
 import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/workbench/activity")
@@ -68,19 +69,22 @@ public class ActivityController {
     Map<String,Object> delete(String ids){
         Map<String, Object> map = new HashMap<>();
         String[] id = ids.split(",");
-        int count = activityService.delete(id);
-        if(count > 0){
+        int count = 0;
+        try {
+            count = activityService.delete(id);
             map.put("flag",true);
             map.put("count",count);
-        }else{
+        } catch (DeleteException e) {
             map.put("flag",false);
+            map.put("msg",e.getMessage());
+            e.printStackTrace();
         }
         return map;
     }
 
-    @RequestMapping("/openUpdate.do")
+    @RequestMapping("/edit.do")
     @ResponseBody
-    Map<String,Object> openUpdate(String id){
+    Map<String,Object> edit(String id){
         Map<String, Object> map = new HashMap<>();
         List<User> users = userService.getUsers();
         Activity activity = activityService.getActivityById(id);
@@ -96,8 +100,19 @@ public class ActivityController {
         if(1==activityService.updateActivity(map)){
             resmap.put("flag",true);
         }else{
-            resmap.put("flag",true);
+            resmap.put("flag",false);
         }
         return resmap;
+    }
+
+    @RequestMapping("/detail.do")
+    ModelAndView detail(String id){
+        ModelAndView mv = new ModelAndView();
+        Activity activity = activityService.getActivityById(id);
+        List<ActivityRemark> remarks = activityService.getRemarks(id);
+        mv.addObject("activity",activity);
+        mv.addObject("remarks",remarks);
+        mv.setViewName("activity/detail");
+        return mv;
     }
 }

@@ -1,10 +1,13 @@
 package com.bjpowernode.crm.workbench.service.impl;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.settings.dao.UserDao;
 import com.bjpowernode.crm.utils.DateTimeUtil;
 import com.bjpowernode.crm.vo.PaginationVO;
 import com.bjpowernode.crm.workbench.dao.ActivityDao;
+import com.bjpowernode.crm.workbench.dao.ActivityRemarkDao;
 import com.bjpowernode.crm.workbench.domain.Activity;
+import com.bjpowernode.crm.workbench.domain.ActivityRemark;
 import com.bjpowernode.crm.workbench.service.ActivityService;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,8 @@ public class ActivityServiceImpl implements ActivityService {
     UserDao userDao;
     @Resource
     ActivityDao activityDao;
+    @Resource
+    ActivityRemarkDao activityRemarkDao;
 
 
     @Override
@@ -35,9 +40,13 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public int delete(String[] id) {
-        activityDao.deleteRemark(id);
-        return activityDao.delete(id);
+    public int delete(String[] id) throws DeleteException {
+        int count = activityRemarkDao.getNums(id);
+        if (count == activityRemarkDao.deleteRemark(id) && activityDao.delete(id) == id.length) {
+            return id.length;
+        }else{
+            throw new DeleteException("删除失败！");
+        }
     }
 
     @Override
@@ -50,4 +59,10 @@ public class ActivityServiceImpl implements ActivityService {
         map.put("editTime", DateTimeUtil.getSysTime());
         return activityDao.updateActivity(map);
     }
+
+    @Override
+    public List<ActivityRemark> getRemarks(String id) {
+        return activityRemarkDao.getRemarks(id);
+    }
+
 }

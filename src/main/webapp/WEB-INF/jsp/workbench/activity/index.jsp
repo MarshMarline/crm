@@ -29,25 +29,25 @@
 
             pageList(1,5);
 
+            $(".time").datetimepicker({
+                minView: "month",
+                language:  'zh-CN',
+                format: 'yyyy-mm-dd',
+                autoclose: true,
+                todayBtn: true,
+                pickerPosition: "bottom-left"
+            });
+
             /*
                 操作模态窗口的方式：
                 需要操作的模态窗口的jquery对象，调用modal方法，为该方法传递参数 show:打开模态窗口   hide：关闭模态窗口
             */
 
-            $("#updatebtn").click(function () {
-
-                $(".time").datetimepicker({
-                    minView: "month",
-                    language:  'zh-CN',
-                    format: 'yyyy-mm-dd',
-                    autoclose: true,
-                    todayBtn: true,
-                    pickerPosition: "bottom-left"
-                });
+            $("#editbtn").click(function () {
 
                 $.ajax({
                     type:'post',
-                    url:"workbench/activity/openUpdate.do",
+                    url:"workbench/activity/edit.do",
                     data:{
                         "id":$("input[name=xz]:checked").val()
                     },
@@ -62,7 +62,6 @@
                         $("#edit-endTime").val(res.activity.endDate);
                         $("#edit-cost").val(res.activity.cost);
                         $("#edit-describe").val(res.activity.description);
-
                     },
                     error:errorfun()
                 });
@@ -81,9 +80,10 @@
                 function () {
                     var ok = window.confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
                     if(!ok){return;};
-                    var ids = $("input[name=xz]:checked:eq(0)").val();
-                    for(var i = 1; i < $("input[name=xz]:checked").length; i ++){
-                        ids += ","+$("input[name=xz]:checked:eq("+i+")").val();
+                    var $xz = $("input[name=xz]:checked");
+                    var ids = $xz[0].value;
+                    for(var i = 1; i < $xz.length; i ++){
+                        ids += ","+$xz[i].value;
                     }
                     $.ajax({
                         type:'get',
@@ -92,9 +92,10 @@
                         success:function (res) {
                             if(res.flag){
                                 alert("成功删除" + res.count + "条记录！");
-                                pageList(1,5);
+                                //第二个参数表示用户选择的每页显示数
+                                pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
                             }else{
-                                alert("删除失败");
+                                alert(res.msg);
                             }
                         },
                         error:function () {
@@ -127,12 +128,12 @@
 
             });
 
-            $("#editbtn").click(function () {
+            $("#updatebtn").click(function () {
                 $.ajax({
                     type:'post',
                     url:"workbench/activity/updateActivity.do",
                     data:{
-                        id:$("input:checkbox[name=xz]").val(),
+                        id:$("input:checkbox[name=xz]:checked").val(),
                         owner:$.trim($("#edit-marketActivityOwner").val()),
                         name:$.trim($("#edit-marketActivityName").val()),
                         startDate:$.trim($("#edit-startTime").val()),
@@ -159,8 +160,11 @@
 								dom对象转换为jquery对象：
 									$(dom)
 						    */
-                            //$("#addActivity")[0].reset();
-                            pageList(1,5);
+                            $("#addActivity")[0].reset();
+                            //第一个参数表示停留在当前页，第二个参数表示用户选择的每页显示数
+                            pageList($("#activityPage").bs_pagination('getOption', 'currentPage')
+                                ,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
                         }else{
                             alert("保存失败");
                         }
@@ -210,8 +214,10 @@
 								dom对象转换为jquery对象：
 									$(dom)
 						    */
-                            //$("#addActivity")[0].reset();
-                            pageList(1,5);
+                            $("#addActivity")[0].reset();
+                            //第二个参数表示保留的用户写入的每页显示数量
+                            pageList(1,$("#activityPage").bs_pagination('getOption', 'rowsPerPage'));
+
                         }else{
                             alert("保存失败");
                         }
@@ -240,20 +246,25 @@
 
             */
 
-            $("#activityList").on("change",$(":checkbox[name=xz]"),function () {
-                $("#qx").prop("checked",$(":checkbox[name=xz]").length == $(":checkbox[name=xz]:checked").length);
-                $("#deletebtn").prop("disabled",!($(":checkbox[name=xz]:checked").length!=0));
-                $("#updatebtn").prop("disabled",!($(":checkbox[name=xz]:checked").length==1));
-            });
-
+            //为动态生成的普通复选框绑定事件
+            $("#activityList").on("change",$(":checkbox[name=xz]"),btnrefresh);
 
         });
 
+        function btnrefresh() {
+            //复选框全选或全不选的时候和全选框统一
+            $("#qx").prop("checked",$(":checkbox[name=xz]").length == $(":checkbox[name=xz]:checked").length);
+            //当没有复选框被选中时设置删除按钮为disable
+            $("#deletebtn").prop("disabled",!($(":checkbox[name=xz]:checked").length!=0));
+            //当只有一个复选框被选中时修改按钮的disable改为false
+            $("#editbtn").prop("disabled",!($(":checkbox[name=xz]:checked").length==1));
+        }
+
         function pageList(pageNo,pageSize){
             //清空全选框
-            $("#qx").prop("checked",false)
-            //查询前，将隐藏域中保存的信息取出来，重新赋予到搜索框中
+            //$("#qx").prop("checked",false);
 
+            //查询前，将隐藏域中保存的信息取出来，重新赋予到搜索框中
             $("#search-name").val($("#hidden-name").val());
             $("#search-owner").val($("#hidden-owner").val());
             $("#search-startDate").val($("#hidden-startDate").val());
@@ -277,15 +288,17 @@
                         html += '<tr class="active">';
                         html += '<td><input type="checkbox" name="xz" value='+act.id+' /></td>';
                         html += '<td><a style="text-decoration: none; cursor: pointer;"';
-                        html += '<td><a onclick="window.location.href=\'uri.do?uri=activity/detail?id='+act.id+'\';">'+act.name+'</a></td>';
+                        html += '<td><a onclick="window.location.href=\'workbench/activity/detail.do?id='+act.id+'\'">'+act.name+'</a></td>';
                         html += '<td>'+act.owner+'</td>';
                         html += '<td>'+act.startDate+'</td>';
                         html += '<td>'+act.endDate+'</td>';
                         html += '</tr>';
                     });
+
                     $("#activityList").html(html);
 
                     var totalPages = res.total%pageSize == 0 ? res.total/pageSize : parseInt(res.total/pageSize) +  1;
+
                     $("#activityPage").bs_pagination({
                         currentPage: pageNo, // 页码
                         rowsPerPage: pageSize, // 每页显示的记录条数
@@ -306,13 +319,14 @@
                         }
                     });
 
+                    //刷新复选框和删改按钮的状态
+                    btnrefresh();
+
                 },
 
                 error:errorfun
             });
         }
-
-
 
         function errorfun(){
             /*
@@ -415,9 +429,6 @@
                                 style="font-size: 15px; color: red;">*</span></label>
                         <div class="col-sm-10" style="width: 300px;">
                             <select class="form-control" id="edit-marketActivityOwner">
-                                <option>zhangsan</option>
-                                <option>lisi</option>
-                                <option>wangwu</option>
                             </select>
                         </div>
                         <label for="edit-marketActivityName" class="col-sm-2 control-label">名称<span
@@ -449,7 +460,13 @@
                     <div class="form-group">
                         <label for="edit-describe" class="col-sm-2 control-label">描述</label>
                         <div class="col-sm-10" style="width: 81%;">
-                            <textarea class="form-control" rows="3" id="edit-describe">市场活动Marketing，是指品牌主办或参与的展览会议与公关市场活动，包括自行主办的各类研讨会、客户交流会、演示会、新产品发布会、体验会、答谢会、年会和出席参加并布展或演讲的展览会、研讨会、行业交流会、颁奖典礼等</textarea>
+                            <%--
+                            关于文本域textarea：
+                                （1）一定是要以标签对的形式来呈现,正常状态下标签对要紧紧的挨着
+                                （2）textarea虽然是以标签对的形式来呈现的，但是它也是属于表单元素范畴
+                                   我们所有的对于textarea的取值和赋值操作，应该统一使用val()方法（而不是html()方法）
+                            --%>
+                            <textarea class="form-control" rows="3" id="edit-describe"></textarea>
                         </div>
                     </div>
 
@@ -458,7 +475,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="editbtn">更新</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="updatebtn">更新</button>
             </div>
         </div>
     </div>
@@ -533,7 +550,7 @@
                 <button type="button" class="btn btn-primary" id="addbtn">
                     <span class="glyphicon glyphicon-plus"></span> 创建
                 </button>
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal" id="updatebtn" disabled>
+                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editActivityModal" id="editbtn" disabled>
                     <span class="glyphicon glyphicon-pencil"></span> 修改
                 </button>
                 <button type="button" class="btn btn-danger" id="deletebtn" disabled="true"><span class="glyphicon glyphicon-minus"></span> 删除</button>

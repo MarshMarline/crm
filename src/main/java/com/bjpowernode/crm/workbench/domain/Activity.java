@@ -1,7 +1,5 @@
 package com.bjpowernode.crm.workbench.domain;
 
-import java.util.Objects;
-
 public class Activity {
 
     private String id;

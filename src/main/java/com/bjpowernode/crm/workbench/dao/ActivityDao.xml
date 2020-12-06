@@ -9,23 +9,6 @@
         insert into tbl_activity(id,owner,name,startDate,endDate,cost,description,createTime,createBy,editTime,editBy) values(#{id},#{owner},#{name},#{startDate},#{endDate},#{cost},#{description},#{createTime},#{createBy},#{editTime},#{editBy})
     </insert>
 
-    <!--
-    	<select id="queryQuestionDynamic" parameterType="Map" resultType="Question">
-		select * from question
-		<where>
-			<if test="questionId !=null and questionId != ''">
-			and questionId like'%' #{questionId} '%'
-			</if>
-			<if test="title !=null and title != ''">
-			and title like'%' #{title} '%'
-			</if>
-			<if test="answer !=null and answer != ''">
-			and answer=#{answer}
-			</if>
-		</where>
-	</select>
-    -->
-
     <select id="getPageList" resultType="Activity">
         select a.id, a.name, u.name as owner, a.startDate, a.endDate
         from tbl_activity a
@@ -79,15 +62,10 @@
         </foreach>
     </delete>
 
-    <delete id="deleteRemark">
-        delete from tbl_activity_remark where activityId in (
-        <foreach collection="array" separator="," item="id" close=")">
-            #{id}
-        </foreach>
-    </delete>
+
 
     <select id="getActivityById" resultType="Activity">
-        select id, owner, name, startDate, endDate, cost, description
+        select *
         from tbl_activity where id = #{id}
     </select>
 
@@ -95,7 +73,6 @@
         update tbl_activity set
         owner=#{owner},name=#{name},startDate=#{startDate},endDate=#{endDate},cost=#{cost},description=#{description},editTime=#{editTime},editBy=#{editBy}
         where id=#{id}
-
     </update>
 
 
