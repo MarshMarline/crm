@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ActivityService {
 
-    int saveActivity(Activity activity);
+    boolean saveActivity(Activity activity);
 
     PaginationVO<Activity> getPageList(HashMap<String, Object> map);
 
@@ -18,11 +18,11 @@ public interface ActivityService {
 
     Activity getActivityById(String id);
 
-    int updateActivity(HashMap<String, Object> map);
+    boolean updateActivity(HashMap<String, Object> map);
 
     List<ActivityRemark> getRemarks(String id);
 
-    int deleteRemarkById(String id);
+    boolean deleteRemarkById(String id);
 
     boolean addRemark(ActivityRemark activityRemark);
 

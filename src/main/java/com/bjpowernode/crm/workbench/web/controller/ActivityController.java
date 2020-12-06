@@ -42,8 +42,7 @@ public class ActivityController {
         Map<String,Object> map = new HashMap<>();
         activity.setId(UUIDUtil.getUUID());
         activity.setCreateTime(DateTimeUtil.getSysTime());
-        int i = activityService.saveActivity(activity);
-        if(i == 1){
+        if(activityService.saveActivity(activity)){
             map.put("flag",true);
         }else{
             map.put("flag",false);
@@ -66,9 +65,9 @@ public class ActivityController {
 
     @RequestMapping("/delete.do")
     @ResponseBody
-    Map<String,Object> delete(String ids){
+    Map<String,Object> delete(String id[]){
         Map<String, Object> map = new HashMap<>();
-        String[] id = ids.split(",");
+        //String[] id = ids.split(",");
         int count = 0;
         try {
             count = activityService.delete(id);
@@ -97,7 +96,7 @@ public class ActivityController {
     @ResponseBody
     Map<String,Object> updateActivity(@RequestParam HashMap<String,Object> map){
         Map<String, Object> resmap = new HashMap<>();
-        if(1==activityService.updateActivity(map)){
+        if(activityService.updateActivity(map)){
             resmap.put("flag",true);
         }else{
             resmap.put("flag",false);
@@ -125,7 +124,7 @@ public class ActivityController {
     @ResponseBody
     Map<String,Object> deleteRemarkById(String id){
         Map<String, Object> resmap = new HashMap<>();
-        if(activityService.deleteRemarkById(id)==1) {
+        if(activityService.deleteRemarkById(id)) {
             resmap.put("flag", true);
         }else{
             resmap.put("flag", false);

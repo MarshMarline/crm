@@ -12,6 +12,8 @@ request.getContextPath() + "/";
 <meta charset="UTF-8">
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css"
+      rel="stylesheet"/>
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
@@ -39,17 +41,7 @@ request.getContextPath() + "/";
 			}
 		});
 
-		$(".time").datetimepicker({
-			minView: "month",
-			language:  'zh-CN',
-			format: 'yyyy-mm-dd',
-			autoclose: true,
-			todayBtn: true,
-			pickerPosition: "bottom-left"
-		});
-
-
-
+		//页面加载完毕后获取用户列表信息铺进模态窗口的下拉列表中
 		$.ajax({
 			type:'get',
 			url:"workbench/activity/getUsers.do",
@@ -62,9 +54,10 @@ request.getContextPath() + "/";
 				$("#edit-marketActivityOwner").val("${activity.owner}");
 				//从模态窗口中用户下拉表中被选中的id得到所有者的名字展示在页面
 				$("#show-name").text($("option[value='${activity.owner}']").text());
-			},
+			}
 		});
 
+		//获取备注列表
         showRemarks();
 
         //当备注文本框为空的时候设置保存和修改按钮不可用
@@ -101,7 +94,9 @@ request.getContextPath() + "/";
 			};
 		});
 
+		//添加备注
         $("#saveRemarkbtn").click(function () {
+        	//字数太长不好看，在前端设置一个长度限制
         	if($.trim($("#remark").val()).length > 80){
         		alert("字数长度超过限制！(80字内)");
         		return;
@@ -116,6 +111,7 @@ request.getContextPath() + "/";
                 },
                 success:function (res) {
 					if(res.flag){
+						//刷新备注列表并关闭窗口
 						showRemarks();
 						$("#cancelBtn").click();
 					}else{
@@ -126,6 +122,7 @@ request.getContextPath() + "/";
             });
         });
 
+        //更新备注
         $("#updateRemarkBtn").click(function () {
 			if($.trim($("#remark").val()).length > 80){
 				alert("字数长度超过限制！(80字内)");
@@ -143,7 +140,6 @@ request.getContextPath() + "/";
 					if(res.flag){
 						$("#edit-close").click();
 						showRemarks();
-
 					}else{
 						alert("修改失败！");
 					}
@@ -184,8 +180,19 @@ request.getContextPath() + "/";
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
+
+		$(".time").datetimepicker({
+			minView: "month",
+			language:  'zh-CN',
+			format: 'yyyy-mm-dd',
+			autoclose: true,
+			todayBtn: true,
+			pickerPosition: "bottom-left"
+		});
+
 	});
 
+	//获取备注列表
 	function showRemarks() {
         $.ajax({
             type:'get',
@@ -219,6 +226,7 @@ request.getContextPath() + "/";
         });
     }
 
+    //删除备注
     function deleteRemark(id) {
 		if(!confirm("确认删除备注：“"+ $("h5[name="+id+"]").text() +"”吗？")){
 			return;
@@ -239,6 +247,7 @@ request.getContextPath() + "/";
         })
     }
 
+    //打开修改备注的模态窗口
     function editRemark(id) {
 		$("#editRemarkModal").modal("show");
 		$("#noteContent").val($("h5[name="+id+"]").text());
@@ -316,11 +325,11 @@ request.getContextPath() + "/";
                         <div class="form-group">
                             <label for="edit-startTime" class="col-sm-2 control-label">开始日期</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-startTime" value="${activity.startDate}">
+                                <input type="text" class="form-control time" id="edit-startTime" value="${activity.startDate}" readonly>
                             </div>
                             <label for="edit-endTime" class="col-sm-2 control-label">结束日期</label>
                             <div class="col-sm-10" style="width: 300px;">
-                                <input type="text" class="form-control" id="edit-endTime" value="${activity.endDate}">
+                                <input type="text" class="form-control time" id="edit-endTime" value="${activity.endDate}" readonly>
                             </div>
                         </div>
 

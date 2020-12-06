@@ -43,8 +43,8 @@
                 需要操作的模态窗口的jquery对象，调用modal方法，为该方法传递参数 show:打开模态窗口   hide：关闭模态窗口
             */
 
+            //打开修改模态窗口，发送ajax请求获取修改前信息并铺进文本框
             $("#editbtn").click(function () {
-
                 $.ajax({
                     type:'post',
                     url:"workbench/activity/edit.do",
@@ -76,19 +76,20 @@
                 pageList(1,5);
             });
 
+            //删除Activity
             $("#deletebtn").click(
                 function () {
-                    var ok = window.confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
+                    var ok = confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
                     if(!ok){return;};
                     var $xz = $("input[name=xz]:checked");
-                    var ids = $xz[0].value;
+                    var ids = "id="+$xz[0].value;
                     for(var i = 1; i < $xz.length; i ++){
-                        ids += ","+$xz[i].value;
+                        ids += "&id="+$xz[i].value;
                     }
                     $.ajax({
                         type:'get',
                         url:"workbench/activity/delete.do",
-                        data:{"ids":ids},
+                        data:ids,
                         success:function (res) {
                             if(res.flag){
                                 alert("成功删除" + res.count + "条记录！");
@@ -105,8 +106,8 @@
                 }
             );
 
+            //打开添加活动模态窗口，发送ajax请求获取用户信息放进所有者下拉列表
             $("#addbtn").click(function () {
-
                 $("#createActivityModal").modal("show");
                 $.ajax({
                     type:'get',
@@ -176,6 +177,7 @@
                 })
             });
 
+            //添加活动
             $("#save").click(function(){
                 $.ajax({
                     type:'post',
@@ -251,6 +253,7 @@
 
         });
 
+        //刷新按钮
         function btnrefresh() {
             //复选框全选或全不选的时候和全选框统一
             $("#qx").prop("checked",$(":checkbox[name=xz]").length == $(":checkbox[name=xz]:checked").length);

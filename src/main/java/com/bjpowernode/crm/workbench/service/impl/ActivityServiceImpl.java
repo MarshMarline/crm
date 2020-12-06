@@ -28,8 +28,12 @@ public class ActivityServiceImpl implements ActivityService {
 
 
     @Override
-    public int saveActivity(Activity activity) {
-        return activityDao.saveActivity(activity);
+    public boolean saveActivity(Activity activity) {
+        Boolean flag = false;
+        if(activityDao.saveActivity(activity)==1){
+            flag = true;
+        }
+        return flag;
     }
 
     @Override
@@ -56,9 +60,13 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public int updateActivity(HashMap<String, Object> map) {
+    public boolean updateActivity(HashMap<String, Object> map) {
+        boolean flag = false;
         map.put("editTime", DateTimeUtil.getSysTime());
-        return activityDao.updateActivity(map);
+        if(activityDao.updateActivity(map) == 1){
+            flag = true;
+        }
+        return flag;
     }
 
     @Override
@@ -67,8 +75,12 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public int deleteRemarkById(String id) {
-        return activityRemarkDao.deleteRemarkById(id);
+    public boolean deleteRemarkById(String id) {
+        boolean flag = false;
+        if(activityRemarkDao.deleteRemarkById(id)==1){
+            flag = true;
+        }
+        return flag;
     }
 
     @Override
