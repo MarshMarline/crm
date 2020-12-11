@@ -9,7 +9,6 @@ import com.bjpowernode.crm.workbench.service.ClueService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
@@ -95,5 +94,13 @@ public class ClueController {
             map.put("flag",false);
         }
         return map;
+    }
+
+    //跳转到转换页面
+    @RequestMapping("gotoConvert.do")
+    String gotoConvert(Clue clue, HttpServletRequest request){
+        clue.setOwner(userService.getUserNameById(clue.getOwner()));
+        request.setAttribute("clue",clue);
+        return "clue/convert";
     }
 }

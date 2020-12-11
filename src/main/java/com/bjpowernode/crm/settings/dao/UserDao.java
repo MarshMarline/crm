@@ -10,4 +10,6 @@ public interface UserDao {
     User login(@Param("loginAct") String loginAct, @Param("loginPwd") String loginPwd);
 
     List<User> getUsers();
+
+    String getUserNameById(String owner);
 }

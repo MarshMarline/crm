@@ -439,10 +439,11 @@ request.getContextPath() + "/";
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
-			<h3>李四先生 <small>动力节点</small></h3>
+			<h3>${clue.fullname}${clue.appellation} <small>${clue.company}</small></h3>
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
-			<button type="button" class="btn btn-default" onclick="window.location.href='uri.do?uri=clue/convert?';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+            <%--这里老师使用的是不走后台直接跳转，但是我们这里使用的是视图解析器，没有办法直接前端跳转，所以我还是走一遍后台--%>
+			<button type="button" class="btn btn-default" onclick="window.location.href='workbench/clue/gotoConvert.do?id=${clue.id}&fullname=${clue.fullname}&appellation=${clue.appellation}&owner=${clue.owner}&company= ${clue.company}';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
 			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>

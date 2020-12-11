@@ -48,4 +48,10 @@ public class UserServiceImpl implements UserService {
         List<User> users = userDao.getUsers();
         return users;
     }
+
+    @Override
+    public String getUserNameById(String owner) {
+        String name = userDao.getUserNameById(owner);
+        return name;
+    }
 }
