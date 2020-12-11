@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.bjpowernode.crm.workbench.dao.ClueActivityRelationDao">
+	
+	<select id="getRelativeActivityByClueId" resultType="Activity">
+        select
+          r.id ,u.name as owner ,a.name,a.startDate,a.endDate,a.cost,a.description,a.createTime,a.createBy,a.editTime,a.editBy
+        from
+          tbl_activity a
+        join
+          tbl_clue_activity_relation r
+        on
+          a.id=r.activityId
+        join
+          tbl_user u
+        on
+          u.id=a.owner
+        where
+          r.clueId = #{id}
+    </select>
+
+    <delete id="removeRelationByReId">
+        delete from tbl_clue_activity_relation where id=#{id}
+    </delete>
+
+    <select id="searchActivityByName" resultType="Activity">
+        select a.id, u.name as owner,a.name,a.startDate,a.endDate,a.cost,a.description,a.createTime,a.createBy,a.editTime,a.editBy
+        from tbl_activity a
+        join tbl_user u
+        on u.id=a.owner
+        left join tbl_clue_activity_relation r
+        on a.id=r.activityid and r.clueId=#{id}
+        where a.name like '%' #{name} '%' and r.id is null
+        order by a.createTime
+    </select>
+
+    <!--添加多条关联-->
+    <insert id="bundRelativeActivity" parameterType="list">
+        insert into tbl_clue_activity_relation(id,clueId,activityId) values
+        <foreach collection="list" item="car" separator="," >
+            (#{car.id}, #{car.clueId}, #{car.activityId})
+        </foreach>
+    </insert>
+  	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

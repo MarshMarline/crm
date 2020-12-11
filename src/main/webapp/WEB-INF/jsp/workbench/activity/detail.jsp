@@ -4,7 +4,6 @@ String basePath = request.getScheme() + "://" +
 request.getServerName() + ":" + request.getServerPort() +
 request.getContextPath() + "/";
 %>
-
 <!DOCTYPE html>
 <html>
 <head>
