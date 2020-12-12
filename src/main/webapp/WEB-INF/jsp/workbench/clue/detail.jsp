@@ -185,9 +185,9 @@ request.getContextPath() + "/";
         });
 	}
 
-	//接触关联
+	//解除关联
 	function removeRelation(id) {
-		if(!confirm("确认接该条触关联吗？")){
+		if(!confirm("确认接触该条关联吗？")){
 			return;
 		}
 		$.ajax({
@@ -443,7 +443,7 @@ request.getContextPath() + "/";
 		</div>
 		<div style="position: relative; height: 50px; width: 500px;  top: -72px; left: 700px;">
             <%--这里老师使用的是不走后台直接跳转，但是我们这里使用的是视图解析器，没有办法直接前端跳转，所以我还是走一遍后台--%>
-			<button type="button" class="btn btn-default" onclick="window.location.href='workbench/clue/gotoConvert.do?id=${clue.id}&fullname=${clue.fullname}&appellation=${clue.appellation}&owner=${clue.owner}&company= ${clue.company}';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
+			<button type="button" class="btn btn-default" onclick="window.location.href='workbench/clue/gotoConvert.do?id=${clue.id}&fullname=${clue.fullname}&appellation=${clue.appellation}&owner=${clue.owner}&company= ${clue.company}&source=${clue.source}';"><span class="glyphicon glyphicon-retweet"></span> 转换</button>
 			<button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
 			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 		</div>

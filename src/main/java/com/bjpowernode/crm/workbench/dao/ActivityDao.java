@@ -20,4 +20,5 @@ public interface ActivityDao {
 
     int updateActivity(HashMap<String, Object> map);
 
+    List<Activity> searchActivityName(String name);
 }

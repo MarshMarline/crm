@@ -5,7 +5,38 @@
 
 <mapper namespace="com.bjpowernode.crm.workbench.dao.ContactsDao">
 	
-  	
+  	<insert id="addContactsByClue">
+        insert into tbl_contacts(
+            id,
+            owner,
+            source,
+            customerId,
+            fullname,
+            appellation,
+            email,
+            mphone,
+            job,
+            createBy,
+            createTime,
+            nextContactTime,
+            address
+        ) values(
+            #{id},
+            #{owner},
+            #{source},
+            #{editBy},
+            #{fullname},
+            #{appellation},
+            #{email},
+            #{mphone},
+            #{job},
+            #{createBy},
+            #{createTime},
+            #{nextContactTime},
+            #{address}
+        )
+    </insert>
+
 </mapper>
 
 

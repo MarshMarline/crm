@@ -22,6 +22,32 @@ request.getContextPath() + "/";
 <script type="text/javascript">
 
 	$(function(){
+
+		$.ajax({
+			type:'get',
+			url:"workbench/clue/getClueList.do",
+			success:function (res) {
+				if(res != null && res != ""){
+					$("#show-clues").empty();
+					var html = "";
+					$.each(res,function (i,r) {
+						html += '<tr>';
+						html += '<td><input type="checkbox" /></td>';
+						html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.do?id='+r.id+'\';">'+r.fullname+r.appellation+'</a></td>';
+						html += '<td>'+r.company+'</td>';
+						html += '<td>'+r.phone+'</td>';
+						html += '<td>'+r.mphone+'</td>';
+						html += '<td>'+r.source+'</td>';
+						html += '<td>zhangsan</td>';
+						html += '<td>'+r.state+'</td>';
+						html += '</tr>';
+					})
+					$("#show-clues").html(html);
+				}
+			},
+			error:errorfun
+		});
+
 		$("#createbtn").click(function () {
 			$.ajax({
 					type:'get',
@@ -509,7 +535,7 @@ request.getContextPath() + "/";
 							<td>线索状态</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="show-clues">
 						<tr>
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/clue/detail.do?id=216d721be00b49bb9e97e626c80718df';">马云先生</a></td>

@@ -16,4 +16,8 @@ public interface ClueActivityRelationDao {
     List<Activity> searchActivityByName(@Param("name") String name, @Param("id") String id);
 
     int bundRelativeActivity(List<ClueActivityRelation> car);
+
+    List<ClueActivityRelation> selectRelationByClueId(String clueId);
+
+    int deleteRelationByClueId(String clueId);
 }

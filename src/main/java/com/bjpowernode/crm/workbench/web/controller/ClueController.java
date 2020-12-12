@@ -5,6 +5,7 @@ import com.bjpowernode.crm.settings.service.UserService;
 import com.bjpowernode.crm.workbench.domain.Activity;
 import com.bjpowernode.crm.workbench.domain.Clue;
 import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
+import com.bjpowernode.crm.workbench.domain.Tran;
 import com.bjpowernode.crm.workbench.service.ClueService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +31,12 @@ public class ClueController {
     @ResponseBody
     List<User> getUserList(){
         return userService.getUsers();
+    }
+
+    @RequestMapping("/getClueList.do")
+    @ResponseBody
+    List<Clue> getClueList(){
+        return clueService.getClueList();
     }
 
     //添加线索
@@ -99,8 +106,32 @@ public class ClueController {
     //跳转到转换页面
     @RequestMapping("gotoConvert.do")
     String gotoConvert(Clue clue, HttpServletRequest request){
-        clue.setOwner(userService.getUserNameById(clue.getOwner()));
+        //clue.setOwner(userService.getUserNameById(clue.getOwner()));
         request.setAttribute("clue",clue);
         return "clue/convert";
+    }
+
+    @RequestMapping(value="selectUserName.do",produces = "text/plain;charset=utf-8")
+    @ResponseBody
+    String selectUserName(String owner){
+        return userService.getUserNameById(owner);
+    }
+
+    //模糊查询活动名，不用排除关联项
+    @RequestMapping("searchActivityName.do")
+    @ResponseBody
+    Object searchActivityName(String name){
+        List<Activity> activities = clueService.searchActivityName(name);
+        return activities;
+    }
+
+    //线索转换
+    @RequestMapping("convert.do")
+    String convert(String clueId, Tran tran,String flag){
+        System.out.println(clueId);
+        System.out.println("========");
+        System.out.println(tran);
+        boolean f = clueService.convert(clueId, tran, flag);
+        return "customer/index";
     }
 }

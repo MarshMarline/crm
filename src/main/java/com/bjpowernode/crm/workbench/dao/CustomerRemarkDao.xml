@@ -4,7 +4,32 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.bjpowernode.crm.workbench.dao.CustomerRemarkDao">
-	
+
+    <insert id="convertRemarks">
+        insert into tbl_customer_remark(
+          id,
+          noteContent,
+          createBy,
+          createTime,
+          editBy,
+          editTime,
+          editFlag,
+          customerId
+        )
+        values
+        <foreach collection="list" separator="," item="r" >
+            (
+                #{r.id},
+                #{r.noteContent},
+                #{r.createBy},
+                #{r.createTime},
+                #{r.editBy},
+                #{r.editTime},
+                #{r.editFlag},
+                #{r.clueId}
+            )
+        </foreach>
+    </insert>
   	
 </mapper>
 
