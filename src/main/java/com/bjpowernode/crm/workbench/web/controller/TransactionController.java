@@ -36,8 +36,8 @@ public class TransactionController {
     }
 
     @RequestMapping("/saveTran.do")
-    @ResponseBody
     String saveTran(Tran tran,HttpServletRequest request){
+        System.out.println(tran);
         String msg = "保存成功！";
         if(!transactionService.saveTran(tran)){
             msg = "保存失败！";

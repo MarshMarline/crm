@@ -122,7 +122,7 @@ public class ClueServiceImpl implements ClueService {
 
         //(4) 线索备注转换到客户备注以及联系人备注
         List<ClueRemark> remarks = clueRemarkDao.getRemarksByClueId(clueId);
-        if(remarks!=null) {
+        if(remarks.size()!=0) {
 
             //客户备注
             for (ClueRemark r : remarks) {
@@ -140,7 +140,7 @@ public class ClueServiceImpl implements ClueService {
 
         //(5) “线索和市场活动”的关系转换到“联系人和市场活动”的关系
         List<ClueActivityRelation> clueActivityRelations = clueActivityRelationDao.selectRelationByClueId(clueId);
-        if(clueActivityRelations != null) {
+        if(clueActivityRelations.size() != 0) {
             for(ClueActivityRelation c:clueActivityRelations){
                 c.setId(UUIDUtil.getUUID());
                 c.setClueId(contactsId);

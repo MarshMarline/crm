@@ -180,22 +180,23 @@ request.getContextPath() + "/";
 	</div>
 	
 	
-	<div style="position:  relative; left: 30px;">
-		<h3>创建交易</h3>
-	  	<div style="position: relative; top: -40px; left: 70%;">
-			<button type="button" class="btn btn-primary">保存</button>
-			<button type="button" class="btn btn-default">取消</button>
+
+	<form class="form-horizontal" role="form" style="position: relative; top: -30px;" method="post" action="workbench/transaction/saveTran.do">
+		<div style="position:  relative; left: 30px;">
+			<h3>创建交易</h3>
+			<div style="position: relative; top: -40px; left: 70%;">
+				<button type="submit" class="btn btn-primary">保存</button>
+				<button type="button" class="btn btn-default">取消</button>
+			</div>
+			<hr style="position: relative; top: -40px;">
 		</div>
-		<hr style="position: relative; top: -40px;">
-	</div>
-	<form class="form-horizontal" role="form" style="position: relative; top: -30px;" method="post" action="/workbench/transaction/saveTran.do">
 		<input type="hidden" name="createBy" value="${user.id}">
 		<div class="form-group">
 			<label for="create-transactionOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 			<div class="col-sm-10" style="width: 300px;">
 				<select class="form-control" id="create-transactionOwner" name="owner">
 				  <c:forEach items="${users}" var="u">
-					  <option id="${u.id}" ${user.id eq u.id ? "selected":""}>${u.name}</option>
+					  <option value="${u.id}" ${user.id eq u.id ? "selected":""}>${u.name}</option>
 				  </c:forEach>
 				</select>
 			</div>
@@ -242,7 +243,7 @@ request.getContextPath() + "/";
 			</div>
 			<label for="create-possibility" class="col-sm-2 control-label">可能性</label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-possibility">
+				<input type="text" class="form-control" id="create-possibility" value="10">
 			</div>
 		</div>
 		

@@ -5,7 +5,7 @@
 
 <mapper namespace="com.bjpowernode.crm.workbench.dao.CustomerRemarkDao">
 
-    <insert id="convertRemarks">
+    <insert id="convertRemarks" parameterType="ClueRemark">
         insert into tbl_customer_remark(
           id,
           noteContent,

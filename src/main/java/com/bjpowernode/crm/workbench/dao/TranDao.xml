@@ -19,7 +19,11 @@
             activityId,
             contactsId,
             createBy,
-            createTime
+            createTime,
+            description,
+            contactSummary,
+            nextContactTime
+
         ) values(
             #{id},
             #{owner},
@@ -33,7 +37,10 @@
             #{activityId},
             #{contactsId},
             #{createBy},
-            #{createTime}
+            #{createTime},
+            #{description},
+            #{contactSummary},
+            #{nextContactTime}
         )
     </insert>
 

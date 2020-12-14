@@ -192,7 +192,7 @@ request.getContextPath() + "/";
 		    <label for="stage">阶段</label>
 		    <select id="stage"  class="form-control" name="stage">
 		    	<c:forEach items="${stage}" var="s">
-                    <option value="${s.id}">${s.value}</option>
+                    <option id="${s.id}">${s.value}</option>
                 </c:forEach>
 		    </select>
 		  </div>
