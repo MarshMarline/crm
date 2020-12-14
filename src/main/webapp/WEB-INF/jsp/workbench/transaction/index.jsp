@@ -22,9 +22,34 @@ request.getContextPath() + "/";
 
 	$(function(){
 		
+		$.ajax({
+			type:'get',
+			url:"workbench/transaction/getTranList.do",
+			success:function (res) {
+				var html = "";
+				$.each(res,function (i,n) {
+					html += '<tr>';
+					html += '<td><input type="checkbox" id="'+n.id+'"/></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'uri.do?uri=transaction/detail\';">'+n.name+'</a></td>';
+					html += '<td>'+n.customerId+'</td>';
+					html += '<td>'+n.stage+'</td>';
+					html += '<td>'+n.type+'</td>';
+					html += '<td>'+n.owner+'</td>';
+					html += '<td>'+n.source+'</td>';
+					html += '<td>'+n.contactsId+'</td>';
+					html += '</tr>';
+				});
+				$("#show-tran").html(html);
+			},
+			error:errorfun
+		})
 		
 		
 	});
+	
+	function errorfun() {
+		alert("error");
+	}
 	
 </script>
 </head>
@@ -135,7 +160,7 @@ request.getContextPath() + "/";
 			</div>
 			<div class="btn-toolbar" role="toolbar" style="background-color: #F7F7F7; height: 50px; position: relative;top: 10px;">
 				<div class="btn-group" style="position: relative; top: 18%;">
-				  <button type="button" class="btn btn-primary" onclick="window.location.href='uri.do?uri=transaction/save';"><span class="glyphicon glyphicon-plus"></span> 创建</button>
+				  <button type="button" class="btn btn-primary" onclick="window.location.href='workbench/transaction/addTran.do';"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" onclick="window.location.href='uri.do?uri=transaction/edit';"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
 				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
@@ -156,7 +181,7 @@ request.getContextPath() + "/";
 							<td>联系人名称</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="show-tran">
 						<tr>
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='uri.do?uri=transaction/detail';">动力节点-交易01</a></td>

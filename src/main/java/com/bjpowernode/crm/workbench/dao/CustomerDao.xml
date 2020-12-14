@@ -9,9 +9,45 @@
         select * from tbl_customer where name=#{company}
     </select>
 
-    <insert id="addCustomer" parameterType="Clue">
+    <insert id="addCustomerByClue" parameterType="Clue">
         insert into tbl_customer(id,owner,name,website,phone,createBy,createTime,nextContactTime,address)
         values(#{id},#{owner},#{company},#{website},#{phone},#{createBy},#{createTime},#{nextContactTime},#{address})
+    </insert>
+
+    <select id="getCustomerName" resultType="String">
+        select name from tbl_customer where name like '%' #{name} '%'
+    </select>
+
+    <select id="getCustomerIdByName" resultType="String">
+        select id from tbl_customer where name = #{name}
+    </select>
+
+    <insert id="addCustomer">
+        insert into tbl_customer(
+            id,
+            owner,
+            name,
+            website,
+            phone,
+            createBy,
+            createTime,
+            contactSummary,
+            nextContactTime,
+            description,
+            address
+        ) values(
+            #{id},
+            #{owner},
+            #{name},
+            #{website},
+            #{phone},
+            #{createBy},
+            #{createTime},
+            #{contactSummary},
+            #{nextContactTime},
+            #{description},
+            #{address}
+        )
     </insert>
 
 </mapper>

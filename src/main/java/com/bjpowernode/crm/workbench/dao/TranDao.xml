@@ -37,6 +37,10 @@
         )
     </insert>
 
+    <select id="getTranList" resultType="Tran">
+        select * from tbl_tran
+    </select>
+
 </mapper>
 
 

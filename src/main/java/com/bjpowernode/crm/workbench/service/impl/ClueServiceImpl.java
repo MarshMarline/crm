@@ -109,7 +109,7 @@ public class ClueServiceImpl implements ClueService {
             customerId = UUIDUtil.getUUID();
             clue.setCreateBy(tran.getCreateBy());
             clue.setId(customerId);
-            if (customerDao.addCustomer(clue)!=1)  flag = false;
+            if (customerDao.addCustomerByClue(clue)!=1)  flag = false;
         }else{
             customerId = customer.getId();
         }

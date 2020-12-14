@@ -81,6 +81,7 @@ public class ClueController {
         return map;
     }
 
+    //模糊查询市场活动
     @RequestMapping("/searchActivityByName.do")
     @ResponseBody
     List<Activity> searchActivityByName(String name, String id){
