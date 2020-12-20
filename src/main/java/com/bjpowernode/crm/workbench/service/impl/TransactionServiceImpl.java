@@ -9,6 +9,7 @@ import com.bjpowernode.crm.workbench.dao.TranDao;
 import com.bjpowernode.crm.workbench.dao.TranHistoryDao;
 import com.bjpowernode.crm.workbench.domain.Customer;
 import com.bjpowernode.crm.workbench.domain.Tran;
+import com.bjpowernode.crm.workbench.domain.TranHistory;
 import com.bjpowernode.crm.workbench.service.TransactionService;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ public class TransactionServiceImpl implements TransactionService {
         return userDao.getUsers();
     }
 
+    //新建交易
     @Override
     public boolean saveTran(Tran tran) {
         boolean flag = true;
@@ -71,4 +73,17 @@ public class TransactionServiceImpl implements TransactionService {
     public List<Tran> getTranList() {
         return tranDao.getTranList();
     }
+
+    @Override
+    public Tran getTran(String id) {
+        return tranDao.getTran(id);
+    }
+
+    //获取交易历史
+    @Override
+    public List<TranHistory> getTranHistoryByTranId(String id) {
+        return tranHistoryDao.getTranHistoryByTranId(id);
+    }
+
+
 }

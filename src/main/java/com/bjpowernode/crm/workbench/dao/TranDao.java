@@ -9,4 +9,6 @@ public interface TranDao {
     int addTran(Tran tran);
 
     List<Tran> getTranList();
+
+    Tran getTran(String id);
 }

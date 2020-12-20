@@ -30,7 +30,7 @@ request.getContextPath() + "/";
 				$.each(res,function (i,n) {
 					html += '<tr>';
 					html += '<td><input type="checkbox" id="'+n.id+'"/></td>';
-					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'uri.do?uri=transaction/detail\';">'+n.name+'</a></td>';
+					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/transaction/getTran.do?id='+n.id+'\';">'+n.name+'</a></td>';
 					html += '<td>'+n.customerId+'</td>';
 					html += '<td>'+n.stage+'</td>';
 					html += '<td>'+n.type+'</td>';
@@ -192,16 +192,6 @@ request.getContextPath() + "/";
 							<td>广告</td>
 							<td>李四</td>
 						</tr>
-                        <tr class="active">
-                            <td><input type="checkbox" /></td>
-                            <td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.html';">动力节点-交易01</a></td>
-                            <td>动力节点</td>
-                            <td>谈判/复审</td>
-                            <td>新业务</td>
-                            <td>zhangsan</td>
-                            <td>广告</td>
-                            <td>李四</td>
-                        </tr>
 					</tbody>
 				</table>
 			</div>

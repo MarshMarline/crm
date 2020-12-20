@@ -65,7 +65,7 @@ request.getContextPath() + "/";
                     );
                 }
 			},
-			delay: 1500
+			delay: 1000
 		});
 
 		//动态获取可能性

@@ -1,6 +1,7 @@
 package com.bjpowernode.crm.workbench.web.controller;
 
 import com.bjpowernode.crm.workbench.domain.Tran;
+import com.bjpowernode.crm.workbench.domain.TranHistory;
 import com.bjpowernode.crm.workbench.service.CustomerService;
 import com.bjpowernode.crm.workbench.service.TransactionService;
 import org.springframework.stereotype.Controller;
@@ -50,6 +51,20 @@ public class TransactionController {
     @ResponseBody
     List<Tran> getTranList(){
         return transactionService.getTranList();
+    }
+
+    @RequestMapping("/getTran.do")
+    String getTran(String id, HttpServletRequest request){
+        Tran tran = transactionService.getTran(id);
+        request.setAttribute("tran", tran);
+        return "/transaction/detail";
+    }
+
+    @RequestMapping("/getTranHistory.do")
+    @ResponseBody
+    List<TranHistory> getTranHistoryByTranId(String id){
+        List<TranHistory> history = transactionService.getTranHistoryByTranId(id);
+        return history;
     }
 
 

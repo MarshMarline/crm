@@ -82,7 +82,7 @@
                     var ok = confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
                     if(!ok){return;};
                     var $xz = $("input[name=xz]:checked");
-                    var ids = "id=${clue.id}";
+                    var ids = "id="+$xz.val();
                     for(var i = 1; i < $xz.length; i ++){
                         ids += "&id="+$xz[i].value;
                     }
