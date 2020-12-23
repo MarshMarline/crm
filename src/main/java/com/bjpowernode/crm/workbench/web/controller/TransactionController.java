@@ -1,5 +1,7 @@
 package com.bjpowernode.crm.workbench.web.controller;
 
+import com.bjpowernode.crm.utils.DateTimeUtil;
+import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.workbench.domain.Tran;
 import com.bjpowernode.crm.workbench.domain.TranHistory;
 import com.bjpowernode.crm.workbench.service.CustomerService;
@@ -71,11 +73,18 @@ public class TransactionController {
 
     @RequestMapping("/changeStage.do")
     @ResponseBody
-    Map<String,Object> changeStage(@RequestParam Map<String,Object> args){
+    Map<String,Object> changeStage(TranHistory tranHistory){
         Map<String,Object> map = new HashMap<>();
-        //transactionService.changeStage();
-        System.out.println(args);
-
+        //System.out.println(args);
+        tranHistory.setCreateTime(DateTimeUtil.getSysTime());
+        tranHistory.setId(UUIDUtil.getUUID());
+        boolean flag = transactionService.changeStage(tranHistory);
+        if(flag){
+            map.put("flag",true);
+            map.put("h",tranHistory);
+        }else{
+            map.put("flag",false);
+        }
         return map;
 
     }

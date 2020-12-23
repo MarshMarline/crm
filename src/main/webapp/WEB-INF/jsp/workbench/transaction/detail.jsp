@@ -33,14 +33,16 @@ request.getContextPath() + "/";
 
 	//默认情况下取消和保存按钮是隐藏的
 	var cancelAndSaveBtnDefault = true;
-	
+
+	var str = ""+"${possibilityMap}";
+	str = str.replace(/[,]+[ ]/g,",\"");
+	str = str.replace(/[{]/g,"{\"");
+	str = str.replace(/[=]/g,"\":");
+	var possibilityMap = JSON.parse(str);
+
 	$(function(){
 
-		var str = ""+"${possibilityMap}";
-		str = str.replace(/[,]+[ ]/g,",\"");
-		str = str.replace(/[{]/g,"{\"");
-		str = str.replace(/[=]/g,"\":");
-		var possibilityMap = JSON.parse(str);
+
 
 		$("#possibility").text(possibilityMap["${tran.stage}"]);
 
@@ -132,20 +134,64 @@ request.getContextPath() + "/";
 
 	}
 
-    function changeStage(i,stage) {
+    function changeStage(index,stage) {
         //alert(i);
         $.ajax({
             type:'post',
             url:"workbench/transaction/changeStage.do",
             data:{
-                "uid":"${user.id}",
-                "stage":"" +stage+ "",
-                "tid":"${tran.id}"
+                "createBy":"${user.id}",
+                "stage":stage,
+                "tranId":"${tran.id}",
+				"money":"${tran.money}",
+				"expectedDate":"${tran.expectedDate}"
             },
             success:function (res) {
+				if(res.flag){
+					//改变文字
+					$("#editBy").text("${user.name}");
+					$("#editTime").text("  "+res.h.createTime);
+					$("#stage").text(res.h.stage);
+					$("#possibility").text(possibilityMap[res.h.stage]);
 
+					//改变图标
+					$("span[name=lost]").each(function (i,n) {
+						$(n).attr("style","");
+					});
+					if(possibilityMap[stage] == 0){
+						$("span[name=process]").each(function (i,n) {
+							$(n).attr("class","glyphicon glyphicon-record mystage");
+							$(n).attr("style","");
+						});
+
+						$("#"+index).attr("style","color:#ff0000");
+					}else{
+						$("span[name=process]").each(function (i,n) {
+
+							if(i == index) {
+								$(n).attr("class", "glyphicon glyphicon-map-marker mystage");
+								$(n).attr("style","color:#90F790");
+							}else if(i < index){
+								$(n).attr("class","glyphicon glyphicon-ok-circle mystage");
+								$(n).attr("style","color:#90F790");
+							}else if(i > index){
+								$(n).attr("class","glyphicon glyphicon-record mystage");
+								$(n).attr("style","color:#000000");
+							}
+
+						});
+					}
+
+
+				}else{
+					alert("嗷呜，出问题辽qwq");
+				}
             },
-            error:errorfun()
+            error:function(XMLHttpRequest,textStatus,errorThrown){
+            	alert(XMLHttpRequest.status);
+            	alert(XMLHttpRequest.readyState);
+            	alert(textStatus);
+			}
         });
     }
 	
@@ -177,48 +223,49 @@ request.getContextPath() + "/";
 	</div>
 
 	<!-- 阶段状态 -->
-	<div style="position: relative; left: 40px; top: -50px;">
+	<div style="position: relative; left: 40px; top: -50px;" >
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <%--这里老师使用的是java，我换成了jstl--%>
-		<c:forEach items="${stage}" var="s" varStatus="i">
-			<c:if test="${possibilityMap[tran.stage] ne 0}">
+			<c:forEach items="${stage}" var="s" varStatus="i">
+				<c:if test="${possibilityMap[tran.stage] ne 0}">
 
-                <c:if test="${possibilityMap[s.value] gt 0}">
-                    <c:if test="${tran.stage eq s.value}">
-                        <span id="${i.index}" class="glyphicon glyphicon-map-marker mystage"
-                              data-toggle="popover" data-placement="bottom"
-                              onclick="changeStage(${i.index},'${s.value}')"
-                              data-content="${s.text}" style="color: #90F790;"></span>
-                        -----------
-                    </c:if>
-                    <c:if test="${tran.stage ne s.value}">
-                        <span id="${i.index}" class="${tran.stage gt s.value ? "glyphicon glyphicon-ok-circle mystage":"glyphicon glyphicon-record mystage"}"
-                              data-toggle="popover" data-placement="bottom" data-content="${s.text}"
-                              onclick="changeStage(${i.index},'${s.value}')"
-                              style="${tran.stage gt s.value ? "color: #90F790;":""}"></span>
-                        -----------
-                    </c:if>
-                </c:if>
+					<c:if test="${possibilityMap[s.value] gt 0}">
+						<c:if test="${tran.stage eq s.value}">
+							<span id="${i.index}" class="glyphicon glyphicon-map-marker mystage" name="process"
+								  data-toggle="popover" data-placement="bottom"
+								  onclick="changeStage(${i.index},'${s.value}')"
+								  data-content="${s.text}" style="color: #90F790;"></span>
+							-----------
+						</c:if>
+						<c:if test="${tran.stage ne s.value}">
+							<span id="${i.index}" name="process" class="${tran.stage gt s.value ? "glyphicon glyphicon-ok-circle mystage":"glyphicon glyphicon-record mystage"}"
+								  data-toggle="popover" data-placement="bottom" data-content="${s.text}"
+								  onclick="changeStage(${i.index},'${s.value}')"
+								  style="${tran.stage gt s.value ? "color: #90F790;":""}"></span>
+							-----------
+						</c:if>
+					</c:if>
 
-                <c:if test="${possibilityMap[s.value] eq 0}">
-                    <span id="${i.index}" class="glyphicon glyphicon-remove mystage"
-                          data-toggle="popover" data-placement="bottom"
-                          onclick="changeStage(${i.index},'${s.value}')"
-                          data-content="${s.text}"></span>
-                          -----------
-			    </c:if>
-			</c:if>
+					<c:if test="${possibilityMap[s.value] eq 0}">
+						<span id="${i.index}" class="glyphicon glyphicon-remove mystage" name="lost"
+							  data-toggle="popover" data-placement="bottom"
+							  onclick="changeStage(${i.index},'${s.value}')"
+							  data-content="${s.text}"></span>
+							  -----------
+					</c:if>
+				</c:if>
 
-            <c:if test="${possibilityMap[tran.stage] eq 0}">
+				<c:if test="${possibilityMap[tran.stage] eq 0}">
 
-                <span id="${i.index}" class="${possibilityMap[s.value] eq 0 ? "glyphicon glyphicon-remove mystage":"glyphicon glyphicon-record mystage"}glyphicon glyphicon-remove mystage"
-                      data-toggle="popover" data-placement="bottom"
-                      data-content="${s.text}"
-                      onclick="changeStage(${i.index},'${s.value}')"
-                      style="${tran.stage eq s.value ? "color: red":"color: black"}"></span>
-                    -----------
+					<span id="${i.index}" name="lost" class="${possibilityMap[s.value] eq 0 ? "glyphicon glyphicon-remove mystage":"glyphicon glyphicon-record mystage"}glyphicon glyphicon-remove mystage"
+						  data-toggle="popover" data-placement="bottom"
+						  data-content="${s.text}"
+						  onclick="changeStage(${i.index},'${s.value}')"
+						  style="${tran.stage eq s.value ? "color: #ff0000":"color: #000000"}"></span>
+						-----------
 
-            </c:if>
+				</c:if>
+
 
 
 
@@ -269,7 +316,7 @@ request.getContextPath() + "/";
 			<div style="width: 300px; color: gray;">客户名称</div>
 			<div style="width: 300px;position: relative; left: 200px; top: -20px;"><b>${tran.customerId}&nbsp;</b></div>
 			<div style="width: 300px;position: relative; left: 450px; top: -40px; color: gray;">阶段</div>
-			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b>${tran.stage}&nbsp;</b></div>
+			<div style="width: 300px;position: relative; left: 650px; top: -60px;"><b id="stage">${tran.stage}&nbsp;</b></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px;"></div>
 			<div style="height: 1px; width: 400px; background: #D5D5D5; position: relative; top: -60px; left: 450px;"></div>
 		</div>
@@ -301,7 +348,7 @@ request.getContextPath() + "/";
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 70px;">
 			<div style="width: 300px; color: gray;">修改者</div>
-			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b>${tran.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;">${tran.editTime}</small></div>
+			<div style="width: 500px;position: relative; left: 200px; top: -20px;"><b id="editBy">${tran.editBy}&nbsp;&nbsp;</b><small style="font-size: 10px; color: gray;" id="editTime">${tran.editTime}</small></div>
 			<div style="height: 1px; width: 550px; background: #D5D5D5; position: relative; top: -20px;"></div>
 		</div>
 		<div style="position: relative; left: 40px; height: 30px; top: 80px;">

@@ -37,6 +37,11 @@
         from tbl_tran_history h join tbl_user u on u.id=h.createBy
         where tranId=#{id}
     </select>
+
+    <insert id="addTranHistoryByMap">
+        insert into tbl_tran_history(id,stage,money,expectedDate,createTime,createBy,tranId)
+        values(#{id},#{stage},#{money},#{expectedDate},#{createTime},#{createBy},#{tranId})
+    </insert>
   	
 </mapper>
 

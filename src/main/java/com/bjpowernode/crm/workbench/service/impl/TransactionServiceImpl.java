@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -83,6 +84,17 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TranHistory> getTranHistoryByTranId(String id) {
         return tranHistoryDao.getTranHistoryByTranId(id);
+    }
+
+    @Override
+    public boolean changeStage(TranHistory tranHistory) {
+        boolean flag = true;
+        //变更阶段
+        if(tranDao.changeStage(tranHistory) != 1) flag = false;
+        //新增一条交易历史
+        if(tranHistoryDao.addTranHistoryByMap(tranHistory) != 1) flag = false;
+
+        return flag;
     }
 
 

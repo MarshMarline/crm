@@ -64,7 +64,7 @@
             con.fullname as contactsId,
             cre.name as createBy,
             t.createTime,
-            t.editBy,
+            edit.name as editBy,
             t.editTime,
             t.description,
             t.contactSummary,
@@ -75,10 +75,15 @@
         left join tbl_contacts con on t.contactsId=con.id
         left join tbl_customer cus on t.customerId=cus.id
         left join tbl_user cre on cre.id=t.createBy
+        left join tbl_user edit on edit.id=t.editBy
         left join tbl_activity a on t.activityId=a.id
 
         where t.id = #{id}
     </select>
+
+    <update id="changeStage">
+        update tbl_tran set editBy=#{createBy},editTime=#{createTime},stage=#{stage} where id=#{tranId}
+    </update>
 
 </mapper>
 

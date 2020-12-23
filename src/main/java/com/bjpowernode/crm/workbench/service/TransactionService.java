@@ -5,6 +5,7 @@ import com.bjpowernode.crm.workbench.domain.Tran;
 import com.bjpowernode.crm.workbench.domain.TranHistory;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TransactionService {
 
@@ -17,4 +18,6 @@ public interface TransactionService {
     Tran getTran(String id);
 
     List<TranHistory> getTranHistoryByTranId(String id);
+
+    boolean changeStage(TranHistory tranHistory);
 }
