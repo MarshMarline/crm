@@ -6,10 +6,12 @@ import com.bjpowernode.crm.workbench.service.CustomerService;
 import com.bjpowernode.crm.workbench.service.TransactionService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.rmi.MarshalledObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,5 +69,15 @@ public class TransactionController {
         return history;
     }
 
+    @RequestMapping("/changeStage.do")
+    @ResponseBody
+    Map<String,Object> changeStage(@RequestParam Map<String,Object> args){
+        Map<String,Object> map = new HashMap<>();
+        //transactionService.changeStage();
+        System.out.println(args);
+
+        return map;
+
+    }
 
 }

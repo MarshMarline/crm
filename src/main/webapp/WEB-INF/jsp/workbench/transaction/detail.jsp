@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
 String basePath = request.getScheme() + "://" +
@@ -42,7 +43,6 @@ request.getContextPath() + "/";
 		var possibilityMap = JSON.parse(str);
 
 		$("#possibility").text(possibilityMap["${tran.stage}"]);
-
 
 		$("#remark").focus(function(){
 			if(cancelAndSaveBtnDefault){
@@ -116,10 +116,13 @@ request.getContextPath() + "/";
 					html += '<td>'+n.createBy+'</td>';
 					html += '</tr>';
 				});
+				//alert(html);
 				$("#show-history").html(html);
 			},
 			error:errorfun
 		});
+		
+
 
 	});
 
@@ -128,6 +131,23 @@ request.getContextPath() + "/";
 		alert("error");
 
 	}
+
+    function changeStage(i,stage) {
+        //alert(i);
+        $.ajax({
+            type:'post',
+            url:"workbench/transaction/changeStage.do",
+            data:{
+                "uid":"${user.id}",
+                "stage":"" +stage+ "",
+                "tid":"${tran.id}"
+            },
+            success:function (res) {
+
+            },
+            error:errorfun()
+        });
+    }
 	
 	
 	
@@ -135,12 +155,16 @@ request.getContextPath() + "/";
 
 </head>
 <body>
-	
+
+	<div id="hidden-stage">
+
+	</div>
+
 	<!-- 返回按钮 -->
 	<div style="position: relative; top: 35px; left: 10px;">
 		<a href="javascript:void(0);" onclick="window.history.back();"><span class="glyphicon glyphicon-arrow-left" style="font-size: 20px; color: #DDDDDD"></span></a>
 	</div>
-	
+
 	<!-- 大标题 -->
 	<div style="position: relative; left: 40px; top: -30px;">
 		<div class="page-header">
@@ -148,14 +172,61 @@ request.getContextPath() + "/";
 		</div>
 		<div style="position: relative; height: 50px; width: 250px;  top: -72px; left: 700px;">
 			<button type="button" class="btn btn-default" onclick="window.location.href='edit.jsp';"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
-			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+			<button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span>删除</button>
 		</div>
 	</div>
 
 	<!-- 阶段状态 -->
 	<div style="position: relative; left: 40px; top: -50px;">
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="资质审查" style="color: #90F790;"></span>
+        <%--这里老师使用的是java，我换成了jstl--%>
+		<c:forEach items="${stage}" var="s" varStatus="i">
+			<c:if test="${possibilityMap[tran.stage] ne 0}">
+
+                <c:if test="${possibilityMap[s.value] gt 0}">
+                    <c:if test="${tran.stage eq s.value}">
+                        <span id="${i.index}" class="glyphicon glyphicon-map-marker mystage"
+                              data-toggle="popover" data-placement="bottom"
+                              onclick="changeStage(${i.index},'${s.value}')"
+                              data-content="${s.text}" style="color: #90F790;"></span>
+                        -----------
+                    </c:if>
+                    <c:if test="${tran.stage ne s.value}">
+                        <span id="${i.index}" class="${tran.stage gt s.value ? "glyphicon glyphicon-ok-circle mystage":"glyphicon glyphicon-record mystage"}"
+                              data-toggle="popover" data-placement="bottom" data-content="${s.text}"
+                              onclick="changeStage(${i.index},'${s.value}')"
+                              style="${tran.stage gt s.value ? "color: #90F790;":""}"></span>
+                        -----------
+                    </c:if>
+                </c:if>
+
+                <c:if test="${possibilityMap[s.value] eq 0}">
+                    <span id="${i.index}" class="glyphicon glyphicon-remove mystage"
+                          data-toggle="popover" data-placement="bottom"
+                          onclick="changeStage(${i.index},'${s.value}')"
+                          data-content="${s.text}"></span>
+                          -----------
+			    </c:if>
+			</c:if>
+
+            <c:if test="${possibilityMap[tran.stage] eq 0}">
+
+                <span id="${i.index}" class="${possibilityMap[s.value] eq 0 ? "glyphicon glyphicon-remove mystage":"glyphicon glyphicon-record mystage"}glyphicon glyphicon-remove mystage"
+                      data-toggle="popover" data-placement="bottom"
+                      data-content="${s.text}"
+                      onclick="changeStage(${i.index},'${s.value}')"
+                      style="${tran.stage eq s.value ? "color: red":"color: black"}"></span>
+                    -----------
+
+            </c:if>
+
+
+
+			<%--<span class="glyphicon glyphicon-record mystage"
+				  data-toggle="popover" data-placement="bottom" data-content="${s.text}"
+				  style="${tran.stage gt s.value ? "color: #90F790;":""}"></span>--%>
+		</c:forEach>
+		<%--<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="资质审查" style="color: #90F790;"></span>
 		-----------
 		<span class="glyphicon glyphicon-ok-circle mystage" data-toggle="popover" data-placement="bottom" data-content="需求分析" style="color: #90F790;"></span>
 		-----------
@@ -172,10 +243,10 @@ request.getContextPath() + "/";
 		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="丢失的线索"></span>
 		-----------
 		<span class="glyphicon glyphicon-record mystage" data-toggle="popover" data-placement="bottom" data-content="因竞争丢失关闭"></span>
-		-----------
+		-------------%>
 		<span class="closingDate">2010-10-10</span>
 	</div>
-	
+
 	<!-- 详细信息 -->
 	<div style="position: relative; top: 0px;">
 		<div style="position: relative; left: 40px; height: 30px;">
