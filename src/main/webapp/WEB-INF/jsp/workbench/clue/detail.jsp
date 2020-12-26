@@ -98,6 +98,68 @@ request.getContextPath() + "/";
 			pickerPosition: "bottom-left"
 		});
 
+		$("#bundbtn").click(function () {
+			$("#serach-name").val("");
+			$("#add-relation").empty();
+			$(":checkbox").prop("checked",false);
+			$("#bundModal").modal("show");
+			//$("#serach-name").focus();获得焦点不好使了
+		});
+
+		//给线索添加选定的关联活动
+		$("#onbundbtn").click(function () {
+			var $xz = $(":checkbox:checked");
+			var relist = [];
+			for(var i = 0; i < $xz.length; i++){
+				relist.push({id:" ",clueId:"${clue.id}",activityId:$xz[i].value});
+			}
+			$.ajax({
+				type:'post',
+				url:"workbench/clue/bundRelativeActivity.do",
+				contentType:'application/json',
+				//直接传一个json数组的car对象给后台
+				data:JSON.stringify(relist),
+				success:function (res) {
+					getRelativeActivity();
+					$("#show-activitys").html("");
+				},
+				error:errorfun
+			});
+		});
+
+		$("#bundModal").keydown(function (event) {
+			if(event.keyCode == 13){
+				$.ajax({
+					type:'get',
+					url:"workbench/clue/searchActivityByName.do",
+					data:{
+						"name": $("#serach-name").val(),
+						"id":"${clue.id}"
+					},
+					success:function (res) {
+						if(res != null && res != ""){
+							var html = "";
+							$.each(res,function (i,n) {
+								html += '<tr>';
+								html += '<td><input type="checkbox" value="'+n.id+'" name = "xz" onclick="btnrefresh()"/></td>';
+								html += '<td>'+n.name+'</td>';
+								html += '<td>'+n.startDate+'</td>';
+								html += '<td>'+n.endDate+'</td>';
+								html += '<td>'+n.owner+'</td>';
+								html += '</tr>';
+							});
+							$("#show-res").html("");
+							$("#add-relation").html(html);
+						}else{
+							$("#show-res").html("null");
+						}
+					},
+					error:errorfun
+				});
+				return false;
+			}
+		});
+
 	});
 
 	function getRelativeActivity() {
@@ -122,67 +184,6 @@ request.getContextPath() + "/";
 			},
 			error:errorfun
 		});
-
-		$("#bundbtn").click(function () {
-			$("#serach-name").val("");
-            $("#add-relation").empty();
-			$(":checkbox").prop("checked",false);
-			$("#bundModal").modal("show");
-            //$("#serach-name").focus();获得焦点不好使了
-        });
-
-		//给线索添加选定的关联活动
-		$("#onbundbtn").click(function () {
-            var $xz = $(":checkbox:checked");
-			var relist = [];
-            for(var i = 0; i < $xz.length; i++){
-				relist.push({id:" ",clueId:"${clue.id}",activityId:$xz[i].value});
-            }
-            $.ajax({
-                type:'post',
-                url:"workbench/clue/bundRelativeActivity.do",
-				contentType:'application/json',
-				//直接传一个json数组的car对象给后台
-                data:JSON.stringify(relist),
-                success:function (res) {
-					getRelativeActivity();
-				},
-                error:errorfun
-            });
-        });
-
-        $("#bundModal").keydown(function (event) {
-            if(event.keyCode == 13){
-                $.ajax({
-                    type:'get',
-                    url:"workbench/clue/searchActivityByName.do",
-                    data:{
-                        "name": $("#serach-name").val(),
-                        "id":"${clue.id}"
-                    },
-                    success:function (res) {
-                        if(res != null && res != ""){
-                            var html = "";
-                            $.each(res,function (i,n) {
-                                html += '<tr>';
-                                html += '<td><input type="checkbox" value="'+n.id+'" name = "xz" onclick="btnrefresh()"/></td>';
-                                html += '<td>'+n.name+'</td>';
-                                html += '<td>'+n.startDate+'</td>';
-                                html += '<td>'+n.endDate+'</td>';
-                                html += '<td>'+n.owner+'</td>';
-                                html += '</tr>';
-                            });
-                            $("#show-res").html("");
-                            $("#add-relation").html(html);
-                        }else{
-                            $("#show-res").html("null");
-                        }
-                    },
-                    error:errorfun
-                });
-                return false;
-            }
-        });
 	}
 
 	//解除关联

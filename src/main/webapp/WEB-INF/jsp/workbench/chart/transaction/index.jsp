@@ -18,7 +18,9 @@
                 url:"workbench/transaction/getChar.do",
                 success:function (res) {
                     if(res.flag) {
-/*                        // 基于准备好的dom，初始化echarts实例
+/*
+                        漏斗图长得比我还丑，算了算了
+                        // 基于准备好的dom，初始化echarts实例
                         var myChart = echarts.init(document.getElementById('main'));
                         // 指定图表的配置项和数据
                         option = {
@@ -81,6 +83,8 @@
 
                         // 使用刚指定的配置项和数据显示图表。
                         myChart.setOption(option);*/
+
+                        //换个柱图
                         // 基于准备好的dom，初始化echarts实例
                         var myChart = echarts.init(document.getElementById('main'));
                         option = {
@@ -96,6 +100,8 @@
                                 type: 'bar'
                             }]
                         };
+
+                        // 使用刚指定的配置项和数据显示图表。
                         myChart.setOption(option);
 
 

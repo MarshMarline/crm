@@ -23,30 +23,7 @@ request.getContextPath() + "/";
 
 	$(function(){
 
-		$.ajax({
-			type:'get',
-			url:"workbench/clue/getClueList.do",
-			success:function (res) {
-				if(res != null && res != ""){
-					$("#show-clues").empty();
-					var html = "";
-					$.each(res,function (i,r) {
-						html += '<tr>';
-						html += '<td><input type="checkbox" /></td>';
-						html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.do?id='+r.id+'\';">'+r.fullname+r.appellation+'</a></td>';
-						html += '<td>'+r.company+'</td>';
-						html += '<td>'+r.phone+'</td>';
-						html += '<td>'+r.mphone+'</td>';
-						html += '<td>'+r.source+'</td>';
-						html += '<td>zhangsan</td>';
-						html += '<td>'+r.state+'</td>';
-						html += '</tr>';
-					})
-					$("#show-clues").html(html);
-				}
-			},
-			error:errorfun
-		});
+		getUserList();
 
 		$("#createbtn").click(function () {
 			$.ajax({
@@ -91,7 +68,7 @@ request.getContextPath() + "/";
 					"address":$.trim($("#create-address").val())
 				},
 				success:function (res) {
-
+					getUserList();
 				},
 				error:errorfun
 			});
@@ -110,6 +87,33 @@ request.getContextPath() + "/";
 
 	function errorfun(){
 		alert("error");
+	}
+
+	function getUserList() {
+		$.ajax({
+			type:'get',
+			url:"workbench/clue/getClueList.do",
+			success:function (res) {
+				if(res != null && res != ""){
+					$("#show-clues").empty();
+					var html = "";
+					$.each(res,function (i,r) {
+						html += '<tr>';
+						html += '<td><input type="checkbox" /></td>';
+						html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.do?id='+r.id+'\';">'+r.fullname+r.appellation+'</a></td>';
+						html += '<td>'+r.company+'</td>';
+						html += '<td>'+r.phone+'</td>';
+						html += '<td>'+r.mphone+'</td>';
+						html += '<td>'+r.source+'</td>';
+						html += '<td>zhangsan</td>';
+						html += '<td>'+r.state+'</td>';
+						html += '</tr>';
+					})
+					$("#show-clues").html(html);
+				}
+			},
+			error:errorfun
+		});
 	}
 	
 </script>
