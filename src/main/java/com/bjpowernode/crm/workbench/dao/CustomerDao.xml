@@ -50,6 +50,27 @@
         )
     </insert>
 
+    <select id="getCustomerList" resultType="Customer">
+        select
+
+            c.id,
+            u.name as owner,
+            c.name,
+            c.website,
+            c.phone,
+            c.createBy,
+            c.createTime,
+            c.editBy,
+            c.editTime,
+            c.contactSummary,
+            c.nextContactTime,
+            c.description,
+            c.address
+
+
+        from tbl_customer c join tbl_user u on c.owner=u.id
+    </select>
+
 </mapper>
 
 

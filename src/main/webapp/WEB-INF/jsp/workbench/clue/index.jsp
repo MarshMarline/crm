@@ -23,7 +23,7 @@ request.getContextPath() + "/";
 
 	$(function(){
 
-		getUserList();
+		getClueList();
 
 		$("#createbtn").click(function () {
 			$.ajax({
@@ -68,11 +68,37 @@ request.getContextPath() + "/";
 					"address":$.trim($("#create-address").val())
 				},
 				success:function (res) {
-					getUserList();
+					getClueList();
 				},
 				error:errorfun
 			});
 		});
+
+		$("#deletebtn").click(function () {
+			var ok = confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
+			if(!ok){return;};
+			var $xz = $("input[name=xz]:checked");
+			var ids = "id="+$xz.val();
+			for(var i = 1; i < $xz.length; i ++){
+				ids += "&id="+$xz[i].value;
+			}
+			$.ajax({
+				type:'get',
+				url:"workbench/clue/delete.do",
+				data:ids,
+				success:function (res) {
+					if(res.flag){
+						alert("成功删除" + res.count + "条记录！");
+						getClueList();
+					}else{
+						alert(res.msg);
+					}
+				},
+				error:function () {
+					alert("删除失败！")
+				}
+			});
+		})
 
 		$(".time").datetimepicker({
 			minView: "month",
@@ -89,7 +115,7 @@ request.getContextPath() + "/";
 		alert("error");
 	}
 
-	function getUserList() {
+	function getClueList() {
 		$.ajax({
 			type:'get',
 			url:"workbench/clue/getClueList.do",
@@ -99,7 +125,7 @@ request.getContextPath() + "/";
 					var html = "";
 					$.each(res,function (i,r) {
 						html += '<tr>';
-						html += '<td><input type="checkbox" /></td>';
+						html += '<td><input type="checkbox" name="xz" value='+r.id+' /></td>';
 						html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/clue/detail.do?id='+r.id+'\';">'+r.fullname+r.appellation+'</a></td>';
 						html += '<td>'+r.company+'</td>';
 						html += '<td>'+r.phone+'</td>';
@@ -520,7 +546,7 @@ request.getContextPath() + "/";
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createClueModal" id="createbtn"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" data-toggle="modal" data-target="#editClueModal"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deletebtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 				

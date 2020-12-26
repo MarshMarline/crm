@@ -27,8 +27,36 @@ request.getContextPath() + "/";
 			//防止下拉菜单消失
 	        e.stopPropagation();
 	    });
+
+		getContactsList();
+
 		
 	});
+
+	function getContactsList() {
+		$.ajax({
+			type:'get',
+			url:"workbench/clue/getContactsList.do",
+			success:function (res) {
+				$("#show-list").empty();
+				var html="";
+				$.each(res,function (i,n) {
+				html += '<tr>'
+				html += '<td><input type="checkbox" /></td>'
+				html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.jsp\';">'+n.fullname+n.appellation+'</a></td>'
+				html += '<td>'+n.customerId+'</td>'
+				html += '<td>'+n.owner+'</td>'
+				html += '<td>'+n.source+'</td>'
+				html += '<td>'+n.birth+'</td>'
+				html += '</tr>'
+				});
+				$("#show-list").html(html);
+			},
+			error:function () {
+				alert("error");
+			}
+		})
+	}
 	
 </script>
 </head>
@@ -405,7 +433,7 @@ request.getContextPath() + "/";
 							<td>生日</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="show-list">
 						<tr>
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.jsp';">李四</a></td>

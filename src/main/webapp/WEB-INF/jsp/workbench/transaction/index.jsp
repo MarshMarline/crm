@@ -21,7 +21,38 @@ request.getContextPath() + "/";
 <script type="text/javascript">
 
 	$(function(){
+
+		getTranList();
+
+		$("#deletebtn").click(function () {
+			var ok = confirm("您确认要删除选中的"+$("input[name=xz]:checked").length+"条记录？");
+			if(!ok){return;};
+			var $xz = $("input[name=xz]:checked");
+			var ids = "id="+$xz.val();
+			for(var i = 1; i < $xz.length; i ++){
+				ids += "&id="+$xz[i].value;
+			}
+			$.ajax({
+				type:'post',
+				url:"workbench/transaction/delete.do",
+				data:ids,
+				success:function (res) {
+					if(res.flag){
+						alert("成功删除" + res.count + "条记录！");
+						getTranList();
+					}else{
+						alert(res.msg);
+					}
+				},
+				error:function () {
+					alert("删除失败！")
+				}
+			});
+		})
 		
+	});
+
+	function getTranList() {
 		$.ajax({
 			type:'get',
 			url:"workbench/transaction/getTranList.do",
@@ -29,7 +60,7 @@ request.getContextPath() + "/";
 				var html = "";
 				$.each(res,function (i,n) {
 					html += '<tr>';
-					html += '<td><input type="checkbox" id="'+n.id+'"/></td>';
+					html += '<td><input type="checkbox" name="xz" value='+n.id+' /></td>';
 					html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/transaction/getTran.do?id='+n.id+'\';">'+n.name+'</a></td>';
 					html += '<td>'+n.customerId+'</td>';
 					html += '<td>'+n.stage+'</td>';
@@ -42,10 +73,8 @@ request.getContextPath() + "/";
 				$("#show-tran").html(html);
 			},
 			error:errorfun
-		})
-		
-		
-	});
+		});
+	}
 	
 	function errorfun() {
 		alert("error");
@@ -162,7 +191,7 @@ request.getContextPath() + "/";
 				<div class="btn-group" style="position: relative; top: 18%;">
 				  <button type="button" class="btn btn-primary" onclick="window.location.href='workbench/transaction/addTran.do';"><span class="glyphicon glyphicon-plus"></span> 创建</button>
 				  <button type="button" class="btn btn-default" onclick="window.location.href='uri.do?uri=transaction/edit';"><span class="glyphicon glyphicon-pencil"></span> 修改</button>
-				  <button type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span> 删除</button>
+				  <button type="button" class="btn btn-danger" id="deletebtn"><span class="glyphicon glyphicon-minus"></span> 删除</button>
 				</div>
 				
 				

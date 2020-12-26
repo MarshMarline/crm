@@ -1,11 +1,9 @@
 package com.bjpowernode.crm.workbench.web.controller;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.settings.service.UserService;
-import com.bjpowernode.crm.workbench.domain.Activity;
-import com.bjpowernode.crm.workbench.domain.Clue;
-import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
-import com.bjpowernode.crm.workbench.domain.Tran;
+import com.bjpowernode.crm.workbench.domain.*;
 import com.bjpowernode.crm.workbench.service.ClueService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -135,4 +133,35 @@ public class ClueController {
         boolean f = clueService.convert(clueId, tran, flag);
         return "customer/index";
     }
+
+    @RequestMapping("delete.do")
+    @ResponseBody
+    Map<String,Object> delete(String id[]){
+        Map<String, Object> map = new HashMap<>();
+        int count = 0;
+        try {
+            count = clueService.delete(id);
+            map.put("flag",true);
+            map.put("count",count);
+        } catch (DeleteException e) {
+            map.put("flag",false);
+            map.put("msg",e.getMessage());
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    @RequestMapping("getContactsList.do")
+    @ResponseBody
+    List<Contacts> getContactsList(){
+        List<Contacts> contacts = clueService.getContactsList();
+        return contacts;
+    }
+
+    @RequestMapping("getCustomerList.do")
+    @ResponseBody
+    List<Customer> getCustomerList(){
+        return clueService.getCustomerList();
+    }
+
 }

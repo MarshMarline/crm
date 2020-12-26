@@ -11,17 +11,38 @@ request.getContextPath() + "/";
 <meta charset="UTF-8">
 
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
 
 <script type="text/javascript">
 
 	$(function(){
-		
+
+		$.ajax({
+			type:'get',
+			url:"workbench/clue/getCustomerList.do",
+			success:function (res) {
+				if(res != null && res != ""){
+					$("#show-customer").empty();
+					var html = "";
+					$.each(res,function (i,n) {
+						html += '<tr>'
+						html += '<td><input type="checkbox" /></td>'
+						html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'detail.jsp\';">'+n.name+'</a></td>'
+						html += '<td>'+n.owner+'</td>'
+						html += '<td>'+n.phone+'</td>'
+						html += '<td>'+n.website+'</td>'
+						html += '</tr>'
+					})
+					$("#show-customer").html(html);
+				}
+			},
+			error:function () {
+				alert("error");
+			}
+		});
+
 		//定制字段
 		$("#definedColumns > li").click(function(e) {
 			//防止下拉菜单消失
@@ -269,7 +290,7 @@ request.getContextPath() + "/";
 							<td>公司网站</td>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="show-customer">
 						<tr>
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='detail.jsp';">动力节点</a></td>

@@ -79,7 +79,8 @@ request.getContextPath() + "/";
 		$(".myHref").mouseout(function(){
 			$(this).children("span").css("color","#E6E6E6");
 		});
-		
+
+
 		
 		//阶段提示框
 		$(".mystage").popover({
@@ -102,28 +103,8 @@ request.getContextPath() + "/";
 				}, 100);
 			});
 
-		$.ajax({
-			type:'get',
-			url:"workbench/transaction/getTranHistory.do",
-			data:{"id":"${tran.id}"},
-			success:function (res) {
-				var html = "";
-				$.each(res,function (i,n) {
-					html += '<tr>';
-					html += '<td>'+n.stage+'</td>';
-					html += '<td>'+n.money+'</td>';
-					html += '<td>'+possibilityMap[n.stage]+'</td>';
-					html += '<td>'+n.expectedDate+'</td>';
-					html += '<td>'+n.createTime+'</td>';
-					html += '<td>'+n.createBy+'</td>';
-					html += '</tr>';
-				});
-				//alert(html);
-				$("#show-history").html(html);
-			},
-			error:errorfun
-		});
-		
+
+		getTranHistory();
 
 
 	});
@@ -134,6 +115,7 @@ request.getContextPath() + "/";
 
 	}
 
+	//变更阶段
     function changeStage(index,stage) {
         //alert(i);
         $.ajax({
@@ -182,7 +164,7 @@ request.getContextPath() + "/";
 						});
 					}
 
-
+					getTranHistory();
 				}else{
 					alert("嗷呜，出问题辽qwq");
 				}
@@ -194,6 +176,30 @@ request.getContextPath() + "/";
 			}
         });
     }
+
+    function getTranHistory() {
+		$.ajax({
+			type:'get',
+			url:"workbench/transaction/getTranHistory.do",
+			data:{"id":"${tran.id}"},
+			success:function (res) {
+				var html = "";
+				$.each(res,function (i,n) {
+					html += '<tr>';
+					html += '<td>'+n.stage+'</td>';
+					html += '<td>'+n.money+'</td>';
+					html += '<td>'+possibilityMap[n.stage]+'</td>';
+					html += '<td>'+n.expectedDate+'</td>';
+					html += '<td>'+n.createTime+'</td>';
+					html += '<td>'+n.createBy+'</td>';
+					html += '</tr>';
+				});
+				//alert(html);
+				$("#show-history").html(html);
+			},
+			error:errorfun
+		});
+	}
 	
 	
 	
@@ -226,10 +232,16 @@ request.getContextPath() + "/";
 	<div style="position: relative; left: 40px; top: -50px;" >
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <%--这里老师使用的是java，我换成了jstl--%>
+		<%--${possibilityMap}这个--%>
 			<c:forEach items="${stage}" var="s" varStatus="i">
+
+				<%--当前阶段可能性大于零时，后面的叉全部为黑叉--%>
+				<%--el表达式嵌套使用是需要省略里面一层的${}}--%>
 				<c:if test="${possibilityMap[tran.stage] ne 0}">
 
+					<%--当循环到的这个图标可能新大于0的时候--%>
 					<c:if test="${possibilityMap[s.value] gt 0}">
+						<%--当前交易阶段等于循环到的这个图标时，设置为mark图标--%>
 						<c:if test="${tran.stage eq s.value}">
 							<span id="${i.index}" class="glyphicon glyphicon-map-marker mystage" name="process"
 								  data-toggle="popover" data-placement="bottom"
@@ -237,6 +249,7 @@ request.getContextPath() + "/";
 								  data-content="${s.text}" style="color: #90F790;"></span>
 							-----------
 						</c:if>
+						<%--当前交易阶段不等于循环到的这个图标时，用el表达式中的三目运算符根据阶段的字符串值大于或小于当前交易阶段来判断是黑圈还是绿圈--%>
 						<c:if test="${tran.stage ne s.value}">
 							<span id="${i.index}" name="process" class="${tran.stage gt s.value ? "glyphicon glyphicon-ok-circle mystage":"glyphicon glyphicon-record mystage"}"
 								  data-toggle="popover" data-placement="bottom" data-content="${s.text}"
@@ -246,6 +259,7 @@ request.getContextPath() + "/";
 						</c:if>
 					</c:if>
 
+					<%--循环到可能性为0的图标时，全部设置为黑叉--%>
 					<c:if test="${possibilityMap[s.value] eq 0}">
 						<span id="${i.index}" class="glyphicon glyphicon-remove mystage" name="lost"
 							  data-toggle="popover" data-placement="bottom"
@@ -255,6 +269,8 @@ request.getContextPath() + "/";
 					</c:if>
 				</c:if>
 
+
+				<%--但前阶段小于0时，前面全部黑圈，当前阶段在叉里面，用el表达式里的三目运算符判断--%>
 				<c:if test="${possibilityMap[tran.stage] eq 0}">
 
 					<span id="${i.index}" name="lost" class="${possibilityMap[s.value] eq 0 ? "glyphicon glyphicon-remove mystage":"glyphicon glyphicon-record mystage"}glyphicon glyphicon-remove mystage"

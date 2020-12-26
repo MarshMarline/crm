@@ -45,7 +45,34 @@
     </insert>
 
     <select id="getTranList" resultType="Tran">
-        select * from tbl_tran
+        select
+
+            t.id,
+            u.name as owner,
+            t.money,
+            t.name,
+            t.expectedDate,
+            cus.name as customerId,
+            t.stage,
+            t.type,
+            t.source,
+            a.name as activityId,
+            con.fullname as contactsId,
+            cre.name as createBy,
+            t.createTime,
+            edit.name as editBy,
+            t.editTime,
+            t.description,
+            t.contactSummary,
+            t.nextContactTime
+
+        from tbl_tran t
+        join tbl_user u on t.owner=u.id
+        left join tbl_contacts con on t.contactsId=con.id
+        left join tbl_customer cus on t.customerId=cus.id
+        left join tbl_user cre on cre.id=t.createBy
+        left join tbl_user edit on edit.id=t.editBy
+        left join tbl_activity a on t.activityId=a.id
     </select>
 
     <select id="getTran" resultType="Tran">
@@ -88,6 +115,13 @@
     <select id="getChar" resultType="map">
         select stage as name , count(*) as value from tbl_tran group by stage
     </select>
+
+    <delete id="delete">
+        delete from tbl_tran where id in (
+        <foreach collection="array" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
 
 </mapper>
 

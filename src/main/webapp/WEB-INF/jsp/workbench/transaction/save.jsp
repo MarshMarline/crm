@@ -258,7 +258,7 @@ request.getContextPath() + "/";
 			</div>
 			<label for="create-activitySrc" class="col-sm-2 control-label">市场活动源&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#findMarketActivity"><span class="glyphicon glyphicon-search"></span></a></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-activitySrc" value="皮卡丘进化">
+				<input type="text" class="form-control" id="create-activitySrc" value="">
 				<input type="hidden" value="dd43fdbc63894cd3a140dc3e7c59877a" name="activityId">
 			</div>
 		</div>
@@ -266,7 +266,7 @@ request.getContextPath() + "/";
 		<div class="form-group">
 			<label for="create-contactsName" class="col-sm-2 control-label">联系人名称&nbsp;&nbsp;<a href="javascript:void(0);" data-toggle="modal" data-target="#findContacts"><span class="glyphicon glyphicon-search"></span></a></label>
 			<div class="col-sm-10" style="width: 300px;">
-				<input type="text" class="form-control" id="create-contactsName" value="马云">
+				<input type="text" class="form-control" id="create-contactsName" value="">
 				<input type="hidden" value="20aa8efe5ee54036a51fe0ad8f6fa5e7" name="contactsId">
 			</div>
 		</div>

@@ -1,5 +1,6 @@
 package com.bjpowernode.crm.workbench.service.impl;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.utils.DateTimeUtil;
 import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.workbench.dao.*;
@@ -49,6 +50,23 @@ public class ClueServiceImpl implements ClueService {
     @Override
     public List<Clue> getClueList() {
         return clueDao.getClueList();
+    }
+
+    @Override
+    public int delete(String[] id) throws DeleteException {
+        int count = clueDao.delete(id);
+        if(count == 0) throw new DeleteException("删除失败");
+        return count;
+    }
+
+    @Override
+    public List<Contacts> getContactsList() {
+        return contactsDao.getContactsList();
+    }
+
+    @Override
+    public List<Customer> getCustomerList() {
+        return customerDao.getCustomerList();
     }
 
     @Override

@@ -13,4 +13,6 @@ public interface TranHistoryDao {
     List<TranHistory> getTranHistoryByTranId(String id);
 
     int addTranHistoryByMap(TranHistory tranHistory);
+
+    int deleteHistoryByTranId(String[] id);
 }

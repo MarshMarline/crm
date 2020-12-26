@@ -1,9 +1,7 @@
 package com.bjpowernode.crm.workbench.service;
 
-import com.bjpowernode.crm.workbench.domain.Activity;
-import com.bjpowernode.crm.workbench.domain.Clue;
-import com.bjpowernode.crm.workbench.domain.ClueActivityRelation;
-import com.bjpowernode.crm.workbench.domain.Tran;
+import com.bjpowernode.crm.exception.DeleteException;
+import com.bjpowernode.crm.workbench.domain.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,4 +24,10 @@ public interface ClueService {
     public boolean convert(String clueId, Tran tran, String flag);
 
     List<Clue> getClueList();
+
+    int delete(String[] id) throws DeleteException;
+
+    List<Contacts> getContactsList();
+
+    List<Customer> getCustomerList();
 }

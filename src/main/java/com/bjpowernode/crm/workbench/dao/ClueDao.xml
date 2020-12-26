@@ -41,6 +41,13 @@
             c.address
         from tbl_clue c join tbl_user u on c.owner=u.id
     </select>
+
+    <delete id="delete">
+        delete from tbl_clue where id in (
+        <foreach collection="array" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
   	
 </mapper>
 

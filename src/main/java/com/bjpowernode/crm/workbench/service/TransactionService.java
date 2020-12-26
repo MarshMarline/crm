@@ -1,5 +1,6 @@
 package com.bjpowernode.crm.workbench.service;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.workbench.domain.Tran;
 import com.bjpowernode.crm.workbench.domain.TranHistory;
@@ -22,4 +23,6 @@ public interface TransactionService {
     boolean changeStage(TranHistory tranHistory);
 
     List<Map<String, Integer>> getChar();
+
+    int delete(String[] id) throws DeleteException;
 }

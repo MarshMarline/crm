@@ -1,5 +1,6 @@
 package com.bjpowernode.crm.workbench.service.impl;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.settings.dao.UserDao;
 import com.bjpowernode.crm.settings.domain.User;
 import com.bjpowernode.crm.utils.DateTimeUtil;
@@ -100,6 +101,15 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Map<String, Integer>> getChar() {
         return tranDao.getChar();
+    }
+
+    @Override
+    public int delete(String[] id) throws DeleteException {
+        int hcount = tranHistoryDao.deleteHistoryByTranId(id);
+        if(hcount == 0) throw new DeleteException("删除交易历史失败！");
+        int count = tranDao.delete(id);
+        if(count == 0) throw new DeleteException("删除交易记录失败！");
+        return count;
     }
 
 

@@ -1,5 +1,6 @@
 package com.bjpowernode.crm.workbench.web.controller;
 
+import com.bjpowernode.crm.exception.DeleteException;
 import com.bjpowernode.crm.utils.DateTimeUtil;
 import com.bjpowernode.crm.utils.UUIDUtil;
 import com.bjpowernode.crm.workbench.domain.Tran;
@@ -111,4 +112,21 @@ public class TransactionController {
         return map;
     }
 
+
+    @RequestMapping("delete.do")
+    @ResponseBody
+    Map<String,Object> delete(String[] id){
+        Map<String, Object> map = new HashMap<>();
+        int count = 0;
+        try {
+            count = transactionService.delete(id);
+            map.put("flag",true);
+            map.put("count",count);
+        } catch (DeleteException e) {
+            map.put("flag",false);
+            map.put("msg",e.getMessage());
+            e.printStackTrace();
+        }
+        return map;
+    }
 }
