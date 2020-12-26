@@ -20,4 +20,6 @@ public interface TransactionService {
     List<TranHistory> getTranHistoryByTranId(String id);
 
     boolean changeStage(TranHistory tranHistory);
+
+    List<Map<String, Integer>> getChar();
 }

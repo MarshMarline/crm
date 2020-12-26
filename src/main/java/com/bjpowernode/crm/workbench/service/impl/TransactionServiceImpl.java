@@ -97,5 +97,10 @@ public class TransactionServiceImpl implements TransactionService {
         return flag;
     }
 
+    @Override
+    public List<Map<String, Integer>> getChar() {
+        return tranDao.getChar();
+    }
+
 
 }

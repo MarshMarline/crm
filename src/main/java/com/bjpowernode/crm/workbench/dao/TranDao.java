@@ -15,4 +15,6 @@ public interface TranDao {
     Tran getTran(String id);
 
     int changeStage(TranHistory tranHistory);
+
+    List<Map<String, Integer>> getChar();
 }

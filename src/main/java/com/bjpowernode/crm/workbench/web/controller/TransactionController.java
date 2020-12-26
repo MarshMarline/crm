@@ -86,7 +86,20 @@ public class TransactionController {
             map.put("flag",false);
         }
         return map;
+    }
 
+    @RequestMapping("getChar.do")
+    @ResponseBody
+    Map<String,Object> getChar(){
+        Map<String,Object> map = new HashMap<>();
+        List<Map<String,Integer>> list = transactionService.getChar();
+        if (list != null){
+            map.put("flag",true);
+            map.put("list",list);
+        }else{
+            map.put("flag",false);
+        }
+        return map;
     }
 
 }
