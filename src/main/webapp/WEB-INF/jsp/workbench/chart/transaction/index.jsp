@@ -18,7 +18,7 @@
                 url:"workbench/transaction/getChar.do",
                 success:function (res) {
                     if(res.flag) {
-                        // 基于准备好的dom，初始化echarts实例
+/*                        // 基于准备好的dom，初始化echarts实例
                         var myChart = echarts.init(document.getElementById('main'));
                         // 指定图表的配置项和数据
                         option = {
@@ -79,9 +79,26 @@
                             ]
                         };
 
-
                         // 使用刚指定的配置项和数据显示图表。
+                        myChart.setOption(option);*/
+                        // 基于准备好的dom，初始化echarts实例
+                        var myChart = echarts.init(document.getElementById('main'));
+                        option = {
+                            xAxis: {
+                                type: 'category',
+                                data: res.name
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: [{
+                                data: res.value,
+                                type: 'bar'
+                            }]
+                        };
                         myChart.setOption(option);
+
+
                     }else{
                         $("#main").val("暂无数据");
                     }
@@ -92,13 +109,17 @@
             })
 
 
+
+
         })
     </script>
 </head>
 <body>
 <body>
+    <h3>交易统计图表</h3>
     <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-    <div id="main" style="width: 600px;height:400px; margin-top: auto"></div>
+    <div id="main" style="width: 1100px;height:400px; margin-top: auto"></div>
+    <div id="main2" style="width: 600px;height:400px; margin-top: auto"></div>
 </body>
 </body>
 </html>

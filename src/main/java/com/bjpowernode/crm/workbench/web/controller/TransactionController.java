@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.rmi.MarshalledObject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,9 +94,17 @@ public class TransactionController {
     Map<String,Object> getChar(){
         Map<String,Object> map = new HashMap<>();
         List<Map<String,Integer>> list = transactionService.getChar();
+        List<String> name = new ArrayList();
+        List<Long> value = new ArrayList();
         if (list != null){
+            for (Map m:list){
+                name.add((String) m.get("name"));
+                value.add((Long)m.get("value"));
+            }
             map.put("flag",true);
             map.put("list",list);
+            map.put("name",name);
+            map.put("value",value);
         }else{
             map.put("flag",false);
         }
