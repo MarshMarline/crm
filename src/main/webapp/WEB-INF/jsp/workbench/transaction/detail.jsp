@@ -231,7 +231,6 @@ request.getContextPath() + "/";
 	<!-- 阶段状态 -->
 	<div style="position: relative; left: 40px; top: -50px;" >
 		阶段&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <%--这里老师使用的是java，我换成了jstl--%>
 		<%--${possibilityMap}这个--%>
 			<c:forEach items="${stage}" var="s" varStatus="i">
 
@@ -270,10 +269,10 @@ request.getContextPath() + "/";
 				</c:if>
 
 
-				<%--但前阶段小于0时，前面全部黑圈，当前阶段在叉里面，用el表达式里的三目运算符判断--%>
+				<%--当前阶段小于0时，前面全部黑圈，当前阶段在叉里面，用el表达式里的三目运算符判断--%>
 				<c:if test="${possibilityMap[tran.stage] eq 0}">
 
-					<span id="${i.index}" name="lost" class="${possibilityMap[s.value] eq 0 ? "glyphicon glyphicon-remove mystage":"glyphicon glyphicon-record mystage"}glyphicon glyphicon-remove mystage"
+					<span id="${i.index}" name="${possibilityMap[s.value] eq 0 ? "lost":"process"}" class="${possibilityMap[s.value] eq 0 ? "glyphicon glyphicon-remove mystage":"glyphicon glyphicon-record mystage"}glyphicon glyphicon-remove mystage"
 						  data-toggle="popover" data-placement="bottom"
 						  data-content="${s.text}"
 						  onclick="changeStage(${i.index},'${s.value}')"
