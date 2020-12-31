@@ -35,7 +35,7 @@
             u.name as createBy,
             h.tranId
         from tbl_tran_history h join tbl_user u on u.id=h.createBy
-        where tranId=#{id} order by h.expectedDate desc
+        where tranId=#{id} order by h.createTime desc
     </select>
 
     <insert id="addTranHistoryByMap">
